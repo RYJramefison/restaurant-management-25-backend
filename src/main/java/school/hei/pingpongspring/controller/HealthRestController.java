@@ -2,13 +2,12 @@ package school.hei.pingpongspring.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import school.hei.pingpongspring.entity.Ingredient;
+import org.springframework.web.bind.annotation.*;
+import school.hei.pingpongspring.entity.test.IngredientTest;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class HealthRestController {
@@ -18,14 +17,14 @@ public class HealthRestController {
         return "pong";
     }
 
-    public static List<Ingredient> getIngredients() {
+    public static List<IngredientTest> getIngredientsTest() {
         return List.of(
-                new Ingredient(1L, "Oeuf", 1000.0, Instant.parse("2025-03-01T00:00:00Z")),
-                new Ingredient(2L, "Huile", 10000.0, Instant.parse("2025-03-20T00:00:00Z"))
+                new IngredientTest(1L, "Oeuf", 1000.0, Instant.parse("2025-03-01T00:00:00Z")),
+                new IngredientTest(2L, "Huile", 10000.0, Instant.parse("2025-03-20T00:00:00Z"))
         );
     }
 
-    @GetMapping("/ingredients")
+    @GetMapping("/ingredientsTest")
     public ResponseEntity<Object> findAllIngredients(
             @RequestParam (name = "priceMinFilter",required = false) Double priceMinFilter,
             @RequestParam (name = "priceMaxFilter",required = false) Double priceMaxFilter
@@ -42,9 +41,10 @@ public class HealthRestController {
 
             }
         }
-        List<Ingredient> ingredients = getIngredients();
-        List<Ingredient> filter = ingredients.stream().filter(ingredient -> {
-            double price = ingredient.getPrice();
+        List<IngredientTest> ingredientTests = getIngredientsTest()
+                ;
+        List<IngredientTest> filter = ingredientTests.stream().filter(ingredientTest -> {
+            double price = ingredientTest.getPrice();
             if (priceMinFilter != null && priceMaxFilter == null){
                 return price >= priceMinFilter;
             }
@@ -61,6 +61,30 @@ public class HealthRestController {
 
         return ResponseEntity.ok().body(filter);
     }
+
+    @PostMapping("/ingredientsTest")
+    public ResponseEntity<Object> saveIngredients(@RequestBody List<IngredientTest> ingredientTests){
+        return ResponseEntity.status(HttpStatus.CREATED).body(ingredientTests);
+    }
+
+    @PutMapping("/ingredientsTest")
+    public ResponseEntity<Object> updateIngredient(@RequestBody List<IngredientTest> ingredientTests){
+        return ResponseEntity.status(HttpStatus.OK).body(ingredientTests);
+    }
+
+    @GetMapping("/ingredientsTest/{id}")
+    public ResponseEntity<Object> getIngredientById(
+            @PathVariable (name = "id", required = false) int id){
+        List<IngredientTest> ingredientTests = getIngredientsTest();
+        Optional<IngredientTest> ingredient = ingredientTests.stream().filter(ingredientTest1 -> ingredientTest1.getId() == id).findAny();
+        if (ingredient.isPresent()){
+            return ResponseEntity.ok().body(ingredient);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ingredient = "+ id + " id not found");
+        }
+    }
+
 
 
 }

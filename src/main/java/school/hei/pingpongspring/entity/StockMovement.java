@@ -5,17 +5,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class Ingredient {
+public class StockMovement {
     private long id;
-    private String name;
-    private Instant dateTime;
+    private long ingredientId;
+    private MovementType type;
+    private double quantity;
     private Unit unit;
-    private List<Price> prices;
-    private List<StockMovement> stockMovements;
+    private Instant date;
 }
