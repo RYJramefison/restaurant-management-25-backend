@@ -1,11 +1,9 @@
 package school.hei.pingpongspring.repository.dao;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import school.hei.pingpongspring.entity.Dish;
-import school.hei.pingpongspring.entity.DishIngredient;
-import school.hei.pingpongspring.entity.Ingredient;
-import school.hei.pingpongspring.entity.Unit;
+import school.hei.pingpongspring.entity.*;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
 import java.sql.Connection;
@@ -16,10 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class DishDAO implements CrudDAO<Dish> {
-    DataSource db = new DataSource();
-    IngredientDAO ingredientCrud = new IngredientDAO();
-    Dish_IngredientDAO dish_ingredientCrud = new Dish_IngredientDAO();
+    private final DataSource db;
+    private final IngredientDAO ingredientCrud ;
+    private final Dish_IngredientDAO dish_ingredientCrud ;
+    private final IngredientPriceDAO subjectPrice;
 
     @Override
     public Dish findById(long id) {
@@ -46,11 +46,11 @@ public class DishDAO implements CrudDAO<Dish> {
 
     @Override
     public void save(Dish toSave) {
-        String sql = "INSERT INTO dish (id, name, price) VALUES (?,?,?)";
-        String updateSql = "UPDATE dish SET name=?, price=? WHERE id=?";
+        String sql = "INSERT INTO dish (id, name, price) VALUES (?,?,?)" +
+                " ON CONFLICT (id) DO UPDATE SET name=excluded.name, price=excluded.price" +
+                "return id, name, price";
         boolean exist= false;
         try (Connection connection = db.getConnection()){
-            if (exist){
                 try (PreparedStatement pstm = connection.prepareStatement(sql)){
                 pstm.setInt(1, (int) toSave.getId());
                 pstm.setString(2, toSave.getName());
@@ -65,14 +65,15 @@ public class DishDAO implements CrudDAO<Dish> {
                         int dishId = (int) toSave.getId();
                         int ingredientId = (int) ingredient.getId();
                         float requiredQuantity = 0;
+                        double recentPrice = ingredient.getPrices().getLast().getPrice();
                         if (ingredient.getUnit() == Unit.G) {
-                            requiredQuantity = (float) ingredient.getPrice() / 20;
+                            requiredQuantity = (float)  recentPrice/ 20;
                         }
                         if (ingredient.getUnit() == Unit.L) {
-                            requiredQuantity = (float) ingredient.getPrice() / 10000;
+                            requiredQuantity = (float) recentPrice / 10000;
                         }
                         if (ingredient.getUnit() == Unit.U) {
-                            requiredQuantity = (float) ingredient.getPrice() / 1000;
+                            requiredQuantity = (float) recentPrice / 1000;
                         }
                         Unit unit = ingredient.getUnit();
                         dishIngredient.setDishId(dishId);
@@ -82,41 +83,8 @@ public class DishDAO implements CrudDAO<Dish> {
                         dish_ingredientCrud.save(dishIngredient);
                     }
                 }
-            }
-            else {
-                try (PreparedStatement pstm = connection.prepareStatement(updateSql)){
-                pstm.setString(1, toSave.getName());
-                pstm.setInt(2, toSave.getPrice());
-                    pstm.setInt(3, (int) toSave.getId());
 
 
-                pstm.executeUpdate();
-
-                toSave.getIngredients().forEach(ingredient -> ingredientCrud.update((int) ingredient.getId(), ingredient));
-
-                    for (Ingredient ingredient : toSave.getIngredients()) {
-                        DishIngredient dishIngredient = new DishIngredient();
-                        long idDish = toSave.getId();
-                        long idIngredient = ingredient.getId();
-                        float requiredQuantity = 0;
-                        if (ingredient.getUnit() == Unit.G) {
-                            requiredQuantity = (float) ingredient.getPrice() / 20;
-                        }
-                        if (ingredient.getUnit() == Unit.L) {
-                            requiredQuantity = (float) ingredient.getPrice() / 10000;
-                        }
-                        if (ingredient.getUnit() == Unit.U) {
-                            requiredQuantity = (float) ingredient.getPrice() / 1000;
-                        }
-                        Unit unit = ingredient.getUnit();
-                        dishIngredient.setDishId(idDish);
-                        dishIngredient.setIngredientId(idIngredient);
-                        dishIngredient.setRequiredQuantity(requiredQuantity);
-                        dishIngredient.setUnit(unit);
-                        dish_ingredientCrud.update((int) toSave.getId(),(int) ingredient.getId(),dishIngredient);
-                    }
-                }
-            }
 
         } catch (SQLException e){
             throw new RuntimeException("Not implemented", e);
@@ -137,10 +105,11 @@ public class DishDAO implements CrudDAO<Dish> {
                 List<Ingredient> ingredients = new ArrayList<>();
                 while (res.next()){
                     Ingredient ingredient = new Ingredient();
-                    ingredient.setId(res.getInt("id"));
+                    List<IngredientPrice> prices = subjectPrice.findByIdIngredient(res.getLong("id"));
+                    ingredient.setId(res.getLong("id"));
                     ingredient.setName(res.getString("name"));
                     ingredient.setDateTime(res.getTimestamp("dateTime").toInstant());
-                    ingredient.setPrice(res.getInt("price"));
+                    ingredient.setPrices(prices);
                     ingredient.setUnit(Unit.valueOf(res.getString("unit")));
 
                     ingredients.add(ingredient);

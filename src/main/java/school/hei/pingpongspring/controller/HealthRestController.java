@@ -58,7 +58,6 @@ public class HealthRestController {
             return true;
         }).toList();
 
-
         return ResponseEntity.ok().body(filter);
     }
 

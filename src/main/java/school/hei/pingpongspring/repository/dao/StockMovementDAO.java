@@ -1,5 +1,6 @@
 package school.hei.pingpongspring.repository.dao;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import school.hei.pingpongspring.entity.MovementType;
 import school.hei.pingpongspring.entity.StockMovement;
@@ -12,8 +13,13 @@ import java.util.List;
 
 @Repository
 public class StockMovementDAO implements CrudDAO<StockMovement> {
-    DataSource db = new DataSource();
-    IngredientDAO ingredientCrudOperation = new IngredientDAO();
+    private final DataSource db;
+    private final IngredientDAO ingredientCrudOperation;
+
+    public StockMovementDAO(DataSource db, IngredientDAO ingredientCrudOperation) {
+        this.db = db;
+        this.ingredientCrudOperation = ingredientCrudOperation;
+    }
 
     public List<StockMovement> getAll(){
         List<StockMovement> stockMovements = new ArrayList<>();
@@ -62,6 +68,32 @@ public class StockMovementDAO implements CrudDAO<StockMovement> {
         } catch (SQLException e){
             throw new RuntimeException("Not implemented", e);
         }
+    }
+
+    public List<StockMovement> findByIngredient(long id){
+        List<StockMovement> stockMovements = new ArrayList<>();
+        String sql = "select id, ingredient_id, type, quantity, unit, date from stock_movement where ingredient_id=?";
+
+        try (Connection connection = db.getConnection();
+            PreparedStatement pstm = connection.prepareStatement(sql)){
+            pstm.setLong(1, id);
+
+            try (ResultSet res = pstm.executeQuery()){
+                while(res.next()){
+                    StockMovement stockMovement = new StockMovement();
+                    stockMovement.setId(res.getLong("id"));
+                    stockMovement.setIngredientId(res.getLong("ingredient_id"));
+                    stockMovement.setType(MovementType.valueOf(res.getString("type")));
+                    stockMovement.setQuantity(Double.valueOf(res.getFloat("quantity")));
+                    stockMovement.setUnit(Unit.valueOf(res.getString("unit")));
+                    stockMovements.add(stockMovement);
+                }
+            }
+        } catch (SQLException e){
+            throw new RuntimeException("get stock movement by ingredient failed "+ e);
+        }
+        return stockMovements;
+
     }
 
     public void update(long id, StockMovement toUpdate){

@@ -7,3 +7,4 @@ INSERT INTO ingredient (id, name, dateTime, unit) VALUES
 INSERT INTO ingredient (id, name, dateTime, unit) VALUES
 (5, 'Sel', '2025-01-01 00:00:00', 'G'),
 (6, 'Riz', '2025-01-01 00:00:00', 'G');
+

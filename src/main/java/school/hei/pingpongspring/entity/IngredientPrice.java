@@ -10,7 +10,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class Price {
+public class IngredientPrice {
     private long id;
     private long ingredientId;
     private double price;

@@ -2,6 +2,7 @@ package school.hei.pingpongspring.repository.dao;
 
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import school.hei.pingpongspring.entity.DishIngredient;
 import school.hei.pingpongspring.entity.Unit;
@@ -13,8 +14,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
+@RequiredArgsConstructor
 public class Dish_IngredientDAO {
-    DataSource db = new DataSource();
+    private final DataSource db;
 
     public DishIngredient findById(int idDIsh, int idIngredient) {
         String sql = "SELECT dish_id, ingredient_id, required_quantity,unit FROM dish_ingredient WHERE dish_id=? AND ingredient_id=?";
@@ -40,7 +42,8 @@ public class Dish_IngredientDAO {
 
     public void save(DishIngredient toSave) {
         DishIngredient dishIngredient = new DishIngredient();
-        String sql = "INSERT INTO dish_ingredient (dish_id, ingredient_id, required_quantity, unit) VALUES (?,?,?,?::unit)";
+        String sql = "INSERT INTO dish_ingredient (dish_id, ingredient_id, required_quantity, unit) VALUES (?,?,?,?::unit)" +
+                " on conflict (id) do update set required_quantity=excluded.required_quantity, unit=excluded.unit";
 
         try (Connection connection = db.getConnection();
              PreparedStatement pstm = connection.prepareStatement(sql)){
