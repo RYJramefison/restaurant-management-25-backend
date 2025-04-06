@@ -3,7 +3,7 @@ package school.hei.pingpongspring.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import school.hei.pingpongspring.entity.test.IngredientTest;
+import school.hei.pingpongspring.model.test.IngredientTest;
 
 import java.time.Instant;
 import java.util.List;

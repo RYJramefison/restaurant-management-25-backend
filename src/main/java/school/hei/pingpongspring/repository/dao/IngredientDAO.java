@@ -1,12 +1,11 @@
 package school.hei.pingpongspring.repository.dao;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Repository;
-import school.hei.pingpongspring.entity.Ingredient;
-import school.hei.pingpongspring.entity.IngredientPrice;
-import school.hei.pingpongspring.entity.StockMovement;
-import school.hei.pingpongspring.entity.Unit;
+import school.hei.pingpongspring.model.Ingredient;
+import school.hei.pingpongspring.model.IngredientPrice;
+import school.hei.pingpongspring.model.StockMovement;
+import school.hei.pingpongspring.model.Unit;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
 import java.sql.*;

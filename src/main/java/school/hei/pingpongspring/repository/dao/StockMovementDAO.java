@@ -2,13 +2,12 @@ package school.hei.pingpongspring.repository.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import school.hei.pingpongspring.entity.MovementType;
-import school.hei.pingpongspring.entity.StockMovement;
-import school.hei.pingpongspring.entity.Unit;
+import school.hei.pingpongspring.model.MovementType;
+import school.hei.pingpongspring.model.StockMovement;
+import school.hei.pingpongspring.model.Unit;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
 import java.sql.*;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 

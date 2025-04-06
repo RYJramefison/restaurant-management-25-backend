@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan({"school.hei.pingpongspring.controller","school.hei.pingpongspring.entity","school.hei.pingpongspring.repository","school.hei.pingpongspring.service"})
+@ComponentScan({"school.hei.pingpongspring.controller", "school.hei.pingpongspring.model","school.hei.pingpongspring.repository","school.hei.pingpongspring.service"})
 public class PingPongSpringApplication {
 
     public static void main(String[] args) {

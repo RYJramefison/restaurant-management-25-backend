@@ -1,11 +1,8 @@
-package school.hei.pingpongspring.entity;
+package school.hei.pingpongspring.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import school.hei.pingpongspring.repository.dao.StockMovementDAO;
 
 import java.time.Instant;
 import java.util.List;

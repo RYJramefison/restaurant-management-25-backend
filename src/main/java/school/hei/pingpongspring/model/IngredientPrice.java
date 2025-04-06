@@ -1,4 +1,4 @@
-package school.hei.pingpongspring.entity;
+package school.hei.pingpongspring.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

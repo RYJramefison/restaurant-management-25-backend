@@ -4,8 +4,8 @@ package school.hei.pingpongspring.repository.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import school.hei.pingpongspring.entity.DishIngredient;
-import school.hei.pingpongspring.entity.Unit;
+import school.hei.pingpongspring.model.DishIngredient;
+import school.hei.pingpongspring.model.Unit;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
 import java.sql.Connection;

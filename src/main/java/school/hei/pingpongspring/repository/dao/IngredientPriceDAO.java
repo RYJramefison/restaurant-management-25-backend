@@ -2,7 +2,7 @@ package school.hei.pingpongspring.repository.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import school.hei.pingpongspring.entity.IngredientPrice;
+import school.hei.pingpongspring.model.IngredientPrice;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
 import java.sql.*;
