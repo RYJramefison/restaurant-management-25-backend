@@ -13,11 +13,8 @@ import school.hei.pingpongspring.service.IngredientService;
 public class IngredientRestController {
     private final IngredientService service;
 
-    @GetMapping("/ingredientdb/{id}")
+    @GetMapping("/ingredients/{id}")
     public ResponseEntity<Object> findById(@PathVariable (name = "id", required = false) long id){
         return ResponseEntity.ok().body(service.findById(id));
     }
-
-
-
 }

@@ -8,18 +8,15 @@ import school.hei.pingpongspring.entity.Unit;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@RequiredArgsConstructor
 public class StockMovementDAO implements CrudDAO<StockMovement> {
     private final DataSource db;
-    private final IngredientDAO ingredientCrudOperation;
 
-    public StockMovementDAO(DataSource db, IngredientDAO ingredientCrudOperation) {
-        this.db = db;
-        this.ingredientCrudOperation = ingredientCrudOperation;
-    }
 
     public List<StockMovement> getAll(){
         List<StockMovement> stockMovements = new ArrayList<>();
@@ -72,7 +69,7 @@ public class StockMovementDAO implements CrudDAO<StockMovement> {
 
     public List<StockMovement> findByIngredient(long id){
         List<StockMovement> stockMovements = new ArrayList<>();
-        String sql = "select id, ingredient_id, type, quantity, unit, date from stock_movement where ingredient_id=?";
+        String sql = "select id, ingredient_id, type, quantity, unit,date from stock_movement where ingredient_id=?";
 
         try (Connection connection = db.getConnection();
             PreparedStatement pstm = connection.prepareStatement(sql)){
@@ -86,6 +83,7 @@ public class StockMovementDAO implements CrudDAO<StockMovement> {
                     stockMovement.setType(MovementType.valueOf(res.getString("type")));
                     stockMovement.setQuantity(Double.valueOf(res.getFloat("quantity")));
                     stockMovement.setUnit(Unit.valueOf(res.getString("unit")));
+                    stockMovement.setDate(res.getTimestamp("date").toInstant());
                     stockMovements.add(stockMovement);
                 }
             }

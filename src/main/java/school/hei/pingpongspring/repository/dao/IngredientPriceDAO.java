@@ -56,9 +56,9 @@ public class IngredientPriceDAO implements CrudDAO<IngredientPrice>{
     public List<IngredientPrice> findByIdIngredient(Long idIngredient) {
         List<IngredientPrice> prices = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement("select p.id, p.price, p.date from ingredient_price p"
+             PreparedStatement statement = connection.prepareStatement("select p.id, p.ingredient_id, p.price, p.date from ingredient_price p"
                      + " join ingredient i on p.ingredient_id = i.id"
-                     + " where p.ingredient_id = ?")) {
+                     + " where i.id = ?")) {
             statement.setLong(1, idIngredient);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
