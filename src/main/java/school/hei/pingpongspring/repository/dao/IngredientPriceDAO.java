@@ -55,10 +55,11 @@ public class IngredientPriceDAO implements CrudDAO<IngredientPrice>{
 
     public List<IngredientPrice> findByIdIngredient(Long idIngredient) {
         List<IngredientPrice> prices = new ArrayList<>();
+        String sql = "select p.id, p.ingredient_id, p.price, p.date from ingredient_price p"
+                + " join ingredient i on p.ingredient_id = i.id"
+                + " where i.id = ?";
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement("select p.id, p.ingredient_id, p.price, p.date from ingredient_price p"
-                     + " join ingredient i on p.ingredient_id = i.id"
-                     + " where i.id = ?")) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, idIngredient);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
@@ -75,6 +76,7 @@ public class IngredientPriceDAO implements CrudDAO<IngredientPrice>{
     private IngredientPrice mapFromResultSet(ResultSet resultSet) throws SQLException {
         IngredientPrice price = new IngredientPrice();
         price.setId(resultSet.getLong("id"));
+        price.setIngredientId(resultSet.getLong("ingredient_id"));
         price.setPrice(resultSet.getDouble("price"));
         price.setDate(resultSet.getTimestamp("date").toInstant());
         return price;
