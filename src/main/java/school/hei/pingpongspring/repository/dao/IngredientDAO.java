@@ -2,9 +2,9 @@ package school.hei.pingpongspring.repository.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import school.hei.pingpongspring.mapper.IngredientMapper;
 import school.hei.pingpongspring.model.Ingredient;
 import school.hei.pingpongspring.model.IngredientPrice;
-import school.hei.pingpongspring.model.StockMovement;
 import school.hei.pingpongspring.model.Unit;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
@@ -19,7 +19,9 @@ import static school.hei.pingpongspring.repository.dao.CriteriaAccepted.*;
 public class IngredientDAO implements CrudDAO<Ingredient> {
     private final DataSource db;
     private final IngredientPriceDAO subjectPrice;
-    private final StockMovementDAO subjectStockMovement;
+    private final IngredientMapper ingredientMapper;
+
+
 
 
     public List<Ingredient> findIngredientByCriteria(List<Criteria> criteria, int size, int page){
@@ -93,13 +95,7 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
              Statement stm = connection.createStatement();
              ResultSet res = stm.executeQuery(sql)){
                 while (res.next()){
-                    Ingredient ingredient = new Ingredient();
-                    List<IngredientPrice> prices = subjectPrice.findByIdIngredient(res.getLong("id"));
-                    ingredient.setId(res.getInt("id"));
-                    ingredient.setName(res.getString("name"));
-                    ingredient.setDateTime(res.getTimestamp("dateTime").toInstant());
-                    ingredient.setPrices(prices);
-                    ingredient.setUnit(Unit.valueOf(res.getString("unit")));
+                    Ingredient ingredient = ingredientMapper.apply(res);
                     ingredients.add(ingredient);
                 }
                 return ingredients;
@@ -110,8 +106,6 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
 
     @Override
     public Ingredient findById(long id) {
-        Ingredient ingredient = new Ingredient();
-
         String sql = "SELECT id, name, datetime, unit FROM ingredient WHERE id=?";
 
         try (Connection connection = db.getConnection();
@@ -119,20 +113,13 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
             pstm.setInt(1,(int) id);
 
             try (ResultSet res = pstm.executeQuery()){
-
-                while (res.next()){
-                    List<IngredientPrice> prices = subjectPrice.findByIdIngredient(res.getLong("id"));
-                    List<StockMovement> stockMovements = subjectStockMovement.findByIngredient(res.getLong("id"));
-                    ingredient.setId(res.getInt("id"));
-                    ingredient.setName(res.getString("name"));
-                    ingredient.setDateTime(res.getTimestamp("dateTime").toInstant());
-                    ingredient.setPrices(prices);
-                    ingredient.setUnit(Unit.valueOf(res.getString("unit")));
-                    System.out.println(prices);
-                    ingredient.setStockMovements(stockMovements);
+                if (res.next()){
+                    return ingredientMapper.apply(res);
                 }
+                throw new ClassNotFoundException("Ingredient.id=" + id + " not found");
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
-            return ingredient;
         } catch (SQLException e){
             throw new RuntimeException("Not implemented", e);
         }
