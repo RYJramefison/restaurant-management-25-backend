@@ -17,4 +17,13 @@ public class StockMovement {
     private double quantity;
     private Unit unit;
     private Instant date;
+
+
+    public StockMovement(long ingredientId, MovementType type, double quantity, Unit unit, Instant date) {
+        this.ingredientId = ingredientId;
+        this.type = type;
+        this.quantity = quantity;
+        this.unit = unit;
+        this.date = date;
+    }
 }

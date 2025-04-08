@@ -9,6 +9,7 @@ import school.hei.pingpongspring.controller.rest.CreateOrUpdateIngredient;
 import school.hei.pingpongspring.controller.rest.IngredientRest;
 import school.hei.pingpongspring.model.Ingredient;
 import school.hei.pingpongspring.model.IngredientPrice;
+import school.hei.pingpongspring.model.StockMovement;
 import school.hei.pingpongspring.repository.dao.Criteria;
 import school.hei.pingpongspring.service.IngredientService;
 import school.hei.pingpongspring.service.exception.ClientException;
@@ -87,4 +88,18 @@ public class IngredientRestController {
         IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
         return ResponseEntity.ok().body(ingredientRest);
     }
+
+    @PutMapping("/ingredients/{ingredientId}/stockMovements")
+    public ResponseEntity<Object> updateIngredientStockMovement(@PathVariable Long ingredientId, @RequestBody List<StockMovement> stockMovements) {
+        List<StockMovement> stockMovements1 = stockMovements.stream()
+                .map(stockMovement ->
+                        new StockMovement(stockMovement.getIngredientId(), stockMovement.getType(), stockMovement.getQuantity(),
+                                stockMovement.getUnit(),stockMovement.getDate()))
+                .toList();
+        Ingredient ingredient = service.addStockMovement(ingredientId, stockMovements1);
+        IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
+        return ResponseEntity.ok().body(ingredientRest);
+    }
+
+
 }
