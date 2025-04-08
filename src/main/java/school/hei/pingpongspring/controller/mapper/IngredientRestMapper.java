@@ -1,14 +1,14 @@
-package edu.hei.school.restaurant.endpoint.mapper;
+package school.hei.pingpongspring.controller.mapper;
 
-import edu.hei.school.restaurant.dao.operations.IngredientCrudOperations;
-import edu.hei.school.restaurant.endpoint.rest.CreateOrUpdateIngredient;
-import edu.hei.school.restaurant.endpoint.rest.IngredientRest;
-import edu.hei.school.restaurant.endpoint.rest.PriceRest;
-import edu.hei.school.restaurant.endpoint.rest.StockMovementRest;
-import edu.hei.school.restaurant.model.Ingredient;
-import edu.hei.school.restaurant.service.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import school.hei.pingpongspring.controller.rest.CreateOrUpdateIngredient;
+import school.hei.pingpongspring.controller.rest.IngredientRest;
+import school.hei.pingpongspring.controller.rest.PriceRest;
+import school.hei.pingpongspring.controller.rest.StockMovementRest;
+import school.hei.pingpongspring.model.Ingredient;
+import school.hei.pingpongspring.repository.dao.IngredientDAO;
+import school.hei.pingpongspring.service.exception.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
 public class IngredientRestMapper {
     @Autowired private PriceRestMapper priceRestMapper;
     @Autowired private StockMovementRestMapper stockMovementRestMapper;
-    @Autowired private IngredientCrudOperations ingredientCrudOperations;
+    @Autowired private IngredientDAO subjectIngredients;
 
     public IngredientRest toRest(Ingredient ingredient) {
         List<PriceRest> prices = ingredient.getPrices().stream()
@@ -33,7 +33,7 @@ public class IngredientRestMapper {
         ingredient.setId(newIngredient.getId());
         ingredient.setName(newIngredient.getName());
         try {
-            Ingredient existingIngredient = ingredientCrudOperations.findById(newIngredient.getId());
+            Ingredient existingIngredient = subjectIngredients.findById(newIngredient.getId());
             ingredient.addPrices(existingIngredient.getPrices());
             ingredient.addStockMovements(existingIngredient.getStockMovements());
         } catch (NotFoundException e) {

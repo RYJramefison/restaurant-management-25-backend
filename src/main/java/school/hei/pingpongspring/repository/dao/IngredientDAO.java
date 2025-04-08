@@ -12,7 +12,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static school.hei.pingpongspring.repository.dao.CriteriaAccepted.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -32,16 +31,16 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
         String paginationSql = " limit "+ size + " offset " + offset;
 
         for (Criteria c : criteria) {
-            if (name.equals(c.getColumn())){
-                sql += " and name like '%"+ c.getValue().toString() + "%'";
+            if ("name".equals(c.getColumn())){
+                sql += " and name ilike '%"+ c.getValue().toString() + "%'";
             }
-            else if (dateTimeLow.equals(c.getColumn())){
+            else if ("dateTimeLow".equals(c.getColumn())){
                 sql += " and datetime >='"+ c.getValue().toString() + "'";
             }
-            else if (dateTimeHigh.equals(c.getColumn())){
+            else if ("dateTimeHigh".equals(c.getColumn())){
                 sql += " and datetime <='"+ c.getValue().toString() + "'";
             }
-            else if (unit.equals(c.getColumn())){
+            else if ("unit".equals(c.getColumn())){
                 sql += " and unit ='"+ c.getValue().toString() + "'";
             }
 //            else if (priceLow.equals(c.getColumn())){
@@ -50,7 +49,7 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
 //            else if (priceHigh.equals(c.getColumn())){
 //                sql += " and price <=" + c.getValue();
 //            }
-            else if(nameOrder.equals(c.getColumn())){
+            else if("nameOrder".equals(c.getColumn())){
                 if (orderBySql.length() == 10){
                     orderBySql += " name " + c.getValue().toString();
                 }
@@ -58,7 +57,7 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
                     orderBySql += ", name " + c.getValue().toString();
                 }
             }
-            else if(dateTimeOrder.equals(c.getColumn())){
+            else if("dateTimeOrder".equals(c.getColumn())){
                 if (orderBySql.length() == 10){
                     orderBySql += " datetime " + c.getValue().toString();
                 }
@@ -66,7 +65,7 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
                     orderBySql += ", datetime " + c.getValue().toString();
                 }
             }
-            else if(priceOrder.equals(c.getColumn())){
+            else if("priceOrder".equals(c.getColumn())){
                 if (orderBySql.length() == 10){
                     orderBySql += " price " + c.getValue().toString();
                 }
@@ -74,7 +73,7 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
                     orderBySql += ", price " + c.getValue().toString();
                 }
             }
-            else if(unitOrder.equals(c.getColumn())){
+            else if("unitOrder".equals(c.getColumn())){
                 if (orderBySql.length() == 10){
                     orderBySql += " unit " + c.getValue().toString();
                 }

@@ -3,12 +3,12 @@ package school.hei.pingpongspring.controller.rest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 @AllArgsConstructor
 @Getter
 public class PriceRest {
     private Long id;
     private Double price;
-    private LocalDate dateValue;
+    private Instant dateValue;
 }

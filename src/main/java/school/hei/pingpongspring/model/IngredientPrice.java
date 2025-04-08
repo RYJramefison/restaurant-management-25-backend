@@ -15,4 +15,8 @@ public class IngredientPrice {
     private long ingredientId;
     private double price;
     private Instant date;
+
+    public IngredientPrice(double price) {
+        this.price = price;
+    }
 }

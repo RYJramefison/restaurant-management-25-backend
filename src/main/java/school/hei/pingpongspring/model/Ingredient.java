@@ -5,7 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @AllArgsConstructor
@@ -18,6 +20,7 @@ public class Ingredient {
     private Unit unit;
     private List<IngredientPrice> prices;
     private List<StockMovement> stockMovements;
+
 
     public double getAvailableQuantity(){
         Instant latestDate = Instant.now();
@@ -48,4 +51,42 @@ public class Ingredient {
 
         return quantity;
     }
+
+    public Double getActualPrice() {
+        return findActualPrice().orElse(new IngredientPrice(0.0)).getPrice();
+    }
+
+    private Optional<IngredientPrice> findActualPrice() {
+        return this.prices.stream().max(Comparator.comparing(IngredientPrice::getDate));
+    }
+
+    public Double getPriceAt(Instant dateValue) {
+        return findPriceAt(dateValue).orElse(new IngredientPrice(0.0)).getPrice();
+    }
+
+    private Optional<IngredientPrice> findPriceAt(Instant dateValue) {
+        return prices.stream()
+                .filter(price -> price.getDate().equals(dateValue))
+                .findFirst();
+    }
+
+    public List<StockMovement> addStockMovements(List<StockMovement> stockMovements) {
+        stockMovements.forEach(stockMovement -> stockMovement.setIngredientId(this.getId()));
+        if (getStockMovements() == null || getStockMovements().isEmpty()){
+            return stockMovements;
+        }
+        getStockMovements().addAll(stockMovements);
+        return getStockMovements();
+    }
+
+    public List<IngredientPrice> addPrices(List<IngredientPrice> prices) {
+        if (getPrices() == null || getPrices().isEmpty()){
+            return prices;
+        }
+        prices.forEach(price -> price.setIngredientId(this.getId()));
+        getPrices().addAll(prices);
+        return getPrices();
+    }
+
+
 }

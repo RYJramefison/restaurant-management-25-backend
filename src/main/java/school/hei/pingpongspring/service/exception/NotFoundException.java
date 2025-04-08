@@ -1,4 +1,4 @@
-package edu.hei.school.restaurant.service.exception;
+package school.hei.pingpongspring.service.exception;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(Exception e) {
