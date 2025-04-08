@@ -67,14 +67,14 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
                     orderBySql += ", datetime " + c.getValue().toString();
                 }
             }
-            else if("priceOrder".equals(c.getColumn())){
-                if (orderBySql.length() == 10){
-                    orderBySql += " price " + c.getValue().toString();
-                }
-                else {
-                    orderBySql += ", price " + c.getValue().toString();
-                }
-            }
+//            else if("priceOrder".equals(c.getColumn())){
+//                if (orderBySql.length() == 10){
+//                    orderBySql += " price " + c.getValue().toString();
+//                }
+//                else {
+//                    orderBySql += ", price " + c.getValue().toString();
+//                }
+//            }
             else if("unitOrder".equals(c.getColumn())){
                 if (orderBySql.length() == 10){
                     orderBySql += " unit " + c.getValue().toString();

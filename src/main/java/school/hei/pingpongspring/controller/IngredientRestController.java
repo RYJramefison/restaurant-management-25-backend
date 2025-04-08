@@ -10,6 +10,7 @@ import school.hei.pingpongspring.controller.rest.IngredientRest;
 import school.hei.pingpongspring.model.Ingredient;
 import school.hei.pingpongspring.model.IngredientPrice;
 import school.hei.pingpongspring.model.StockMovement;
+import school.hei.pingpongspring.model.Unit;
 import school.hei.pingpongspring.repository.dao.Criteria;
 import school.hei.pingpongspring.service.IngredientService;
 import school.hei.pingpongspring.service.exception.ClientException;
@@ -38,12 +39,16 @@ public class IngredientRestController {
     public ResponseEntity<List<Ingredient>> findByCriteria(
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(required = false) String name
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Unit unit
 
     ){
         List<Criteria> criteria = new ArrayList<>();
         if (name != null) {
             criteria.add(new Criteria( "name" , name));
+        }
+        if (unit != null) {
+            criteria.add(new Criteria( "unit" , unit));
         }
         return ResponseEntity.ok(service.findIngredientsByCriteria(criteria, size, page));
     }
