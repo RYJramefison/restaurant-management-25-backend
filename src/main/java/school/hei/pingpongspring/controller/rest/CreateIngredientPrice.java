@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 
-import java.time.LocalDate;
+import java.time.Instant;
 
 @AllArgsConstructor
 @Getter
 public class CreateIngredientPrice {
     private Double price;
-    private LocalDate date;
+    private Instant date;
 }

@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.controller.mapper.IngredientRestMapper;
+import school.hei.pingpongspring.controller.rest.CreateIngredientPrice;
 import school.hei.pingpongspring.controller.rest.CreateOrUpdateIngredient;
 import school.hei.pingpongspring.controller.rest.IngredientRest;
 import school.hei.pingpongspring.model.Ingredient;
+import school.hei.pingpongspring.model.IngredientPrice;
 import school.hei.pingpongspring.repository.dao.Criteria;
 import school.hei.pingpongspring.service.IngredientService;
 import school.hei.pingpongspring.service.exception.ClientException;
@@ -73,5 +75,16 @@ public class IngredientRestController {
                 .map(ingredient -> ingredientRestMapper.toRest(ingredient))
                 .toList();
         return ResponseEntity.ok().body(ingredientsRest);
+    }
+
+    @PutMapping("/ingredients/{ingredientId}/prices")
+    public ResponseEntity<Object> updateIngredientPrices(@PathVariable Long ingredientId, @RequestBody List<CreateIngredientPrice> ingredientPrices) {
+        List<IngredientPrice> prices = ingredientPrices.stream()
+                .map(ingredientPrice ->
+                        new IngredientPrice(ingredientPrice.getPrice(), ingredientPrice.getDate()))
+                .toList();
+        Ingredient ingredient = service.addPrices(ingredientId, prices);
+        IngredientRest ingredientRest = ingredientRestMapper.toRest(ingredient);
+        return ResponseEntity.ok().body(ingredientRest);
     }
 }

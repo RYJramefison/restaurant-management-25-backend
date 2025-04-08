@@ -3,6 +3,7 @@ package school.hei.pingpongspring.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import school.hei.pingpongspring.model.Ingredient;
+import school.hei.pingpongspring.model.IngredientPrice;
 import school.hei.pingpongspring.repository.dao.Criteria;
 import school.hei.pingpongspring.repository.dao.IngredientDAO;
 
@@ -60,4 +61,10 @@ public class IngredientService {
         return subjectIngredient.saveAll(ingredients);
     }
 
+    public Ingredient addPrices(Long ingredientId, List<IngredientPrice> pricesToAdd) {
+        Ingredient ingredient = subjectIngredient.findById(ingredientId);
+        ingredient.addPrices(pricesToAdd);
+        List<Ingredient> ingredientsSaved = subjectIngredient.saveAll(List.of(ingredient));
+        return ingredientsSaved.getFirst();
+    }
 }
