@@ -1,12 +1,14 @@
 package school.hei.pingpongspring.repository.dao;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Repository;
 import school.hei.pingpongspring.mapper.IngredientMapper;
 import school.hei.pingpongspring.model.Ingredient;
 import school.hei.pingpongspring.model.IngredientPrice;
 import school.hei.pingpongspring.model.Unit;
 import school.hei.pingpongspring.repository.bd.DataSource;
+import school.hei.pingpongspring.service.exception.ServerException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,9 +20,9 @@ import java.util.List;
 public class IngredientDAO implements CrudDAO<Ingredient> {
     private final DataSource db;
     private final IngredientPriceDAO subjectPrice;
+    private final StockMovementDAO stockMovementDAO;
     private final IngredientMapper ingredientMapper;
-
-
+    private final DataSource dataSource;
 
 
     public List<Ingredient> findIngredientByCriteria(List<Criteria> criteria, int size, int page){
@@ -155,6 +157,35 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
 
         } catch (SQLException e){
             throw new RuntimeException("Not implemented", e);
+        }
+    }
+
+    @SneakyThrows
+    public List<Ingredient> saveAll(List<Ingredient> entities) {
+        List<Ingredient> ingredients = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement =
+                         connection.prepareStatement("insert into ingredient (id, name) values (?, ?)"
+                                 + " on conflict (id) do update set name=excluded.name"
+                                 + " returning id, name")) {
+                entities.forEach(entityToSave -> {
+                    try {
+                        statement.setLong(1, entityToSave.getId());
+                        statement.setString(2, entityToSave.getName());
+                        statement.addBatch(); // group by batch so executed as one query in database
+                    } catch (SQLException e) {
+                        throw new ServerException(e);
+                    }
+                    subjectPrice.saveAll((entityToSave.getPrices()));
+                    stockMovementDAO.saveAll((entityToSave.getStockMovements()));
+                });
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        ingredients.add(ingredientMapper.apply(resultSet));
+                    }
+                }
+                return ingredients;
+            }
         }
     }
 }

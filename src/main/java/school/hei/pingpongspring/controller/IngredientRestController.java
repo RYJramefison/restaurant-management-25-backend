@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.controller.mapper.IngredientRestMapper;
+import school.hei.pingpongspring.controller.rest.CreateOrUpdateIngredient;
 import school.hei.pingpongspring.controller.rest.IngredientRest;
 import school.hei.pingpongspring.model.Ingredient;
 import school.hei.pingpongspring.repository.dao.Criteria;
@@ -61,5 +62,16 @@ public class IngredientRestController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @PutMapping("/ingredients")
+    public ResponseEntity<Object> updateIngredients(@RequestBody List<CreateOrUpdateIngredient> ingredientsToCreateOrUpdate) {
+        List<Ingredient> ingredients = ingredientsToCreateOrUpdate.stream()
+                .map(ingredient -> ingredientRestMapper.toModel(ingredient))
+                .toList();
+        List<IngredientRest> ingredientsRest = service.saveAll(ingredients).stream()
+                .map(ingredient -> ingredientRestMapper.toRest(ingredient))
+                .toList();
+        return ResponseEntity.ok().body(ingredientsRest);
     }
 }

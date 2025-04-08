@@ -2,19 +2,24 @@ package school.hei.pingpongspring.repository.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import school.hei.pingpongspring.mapper.StockMovementMapper;
 import school.hei.pingpongspring.model.MovementType;
 import school.hei.pingpongspring.model.StockMovement;
 import school.hei.pingpongspring.model.Unit;
 import school.hei.pingpongspring.repository.bd.DataSource;
+import school.hei.pingpongspring.service.exception.ServerException;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.Instant.now;
+
 @Repository
 @RequiredArgsConstructor
 public class StockMovementDAO implements CrudDAO<StockMovement> {
     private final DataSource db;
+    private final StockMovementMapper stockMovementMapper;
 
 
     public List<StockMovement> getAll(){
@@ -106,6 +111,39 @@ public class StockMovementDAO implements CrudDAO<StockMovement> {
 
         } catch (SQLException e){
             throw new RuntimeException("Not implemented", e);
+        }
+    }
+
+    public List<StockMovement> saveAll(List<StockMovement> entities) {
+        List<StockMovement> stockMovements = new ArrayList<>();
+        String sql = """
+                insert into stock_movement (id, ingredient_id, type, quantity, unit, date)
+                values (?, ?, ?, ?, ?, ?)
+                on conflict (id) do nothing returning id, ingredient_id, type, quantity, unit, date""";
+        try (Connection connection = db.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+            entities.forEach(entityToSave -> {
+                try {
+                    statement.setLong(1, entityToSave.getId());
+                    statement.setLong(6, entityToSave.getIngredientId());
+                    statement.setString(4, entityToSave.getType().name());
+                    statement.setDouble(2, entityToSave.getQuantity());
+                    statement.setString(3, entityToSave.getUnit().name());
+                    statement.setTimestamp(5, Timestamp.from(now()));
+                    statement.addBatch(); // group by batch so executed as one query in database
+                } catch (SQLException e) {
+                    throw new ServerException(e);
+                }
+            });
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    stockMovements.add(stockMovementMapper.apply(resultSet));
+                }
+            }
+            return stockMovements;
+        } catch (SQLException e) {
+            throw new ServerException(e);
         }
     }
 }

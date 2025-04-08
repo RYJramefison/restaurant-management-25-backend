@@ -17,8 +17,9 @@ public class StockMovementMapper implements Function<ResultSet, StockMovement> {
     public StockMovement apply(ResultSet resultSet) {
         StockMovement stockMovement = new StockMovement();
         stockMovement.setId(resultSet.getLong("id"));
-        stockMovement.setQuantity(resultSet.getDouble("quantity"));
+        stockMovement.setIngredientId(resultSet.getLong("ingredient_id"));
         stockMovement.setType(MovementType.valueOf(resultSet.getString("type")));
+        stockMovement.setQuantity(resultSet.getDouble("quantity"));
         stockMovement.setUnit(Unit.valueOf(resultSet.getString("unit")));
         stockMovement.setDate(resultSet.getTimestamp("date").toInstant());
         return stockMovement;

@@ -55,4 +55,9 @@ public class IngredientService {
     public List<Ingredient> findIngredientsByCriteria(List<Criteria> criteria , int size, int page){
         return subjectIngredient.findIngredientByCriteria(criteria , size, page);
     }
+
+    public List<Ingredient> saveAll(List<Ingredient> ingredients) {
+        return subjectIngredient.saveAll(ingredients);
+    }
+
 }
