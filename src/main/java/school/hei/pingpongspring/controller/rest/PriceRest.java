@@ -9,6 +9,7 @@ import java.time.Instant;
 @Getter
 public class PriceRest {
     private Long id;
+    private long ingredientId;
     private Double price;
     private Instant dateValue;
 }

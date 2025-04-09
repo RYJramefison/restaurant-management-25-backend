@@ -28,7 +28,7 @@ public class IngredientPriceDAO implements CrudDAO<IngredientPrice>{
         List<IngredientPrice> prices = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement =
-                     connection.prepareStatement("insert into price (id, ingredient_id, price, date) values (?, ?, ?, ?)"
+                     connection.prepareStatement("insert into ingredient_price (id, ingredient_id, price, date) values (?, ?, ?, ?)"
                              + " on conflict (id) do nothing"
                              + " returning id, ingredient_id, price, date");) {
             entities.forEach(entityToSave -> {
@@ -36,10 +36,11 @@ public class IngredientPriceDAO implements CrudDAO<IngredientPrice>{
                     statement.setLong(1, entityToSave.getId());
                     statement.setLong(2, entityToSave.getIngredientId());
                     statement.setFloat(3, (float) entityToSave.getPrice());
+                    System.out.println("price of prices "+ entityToSave.getPrice());
                     statement.setTimestamp(4, Timestamp.from(entityToSave.getDate()));
                     statement.addBatch(); // group by batch so executed as one query in database
                 } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException("Save all prices Not implemented "+e);
                 }
             });
             try (ResultSet resultSet = statement.executeQuery()) {

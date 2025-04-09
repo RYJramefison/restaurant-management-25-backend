@@ -11,6 +11,6 @@ public class PriceRestMapper implements Function<IngredientPrice, PriceRest> {
 
     @Override
     public PriceRest apply(IngredientPrice price) {
-        return new PriceRest(price.getId(), price.getPrice(), price.getDate());
+        return new PriceRest(price.getId(),price.getIngredientId(), price.getPrice(), price.getDate());
     }
 }

@@ -72,18 +72,20 @@ public class IngredientRestController {
         }
     }
 
-    @PutMapping("/ingredients")
-    public ResponseEntity<Object> updateIngredients(@RequestBody List<CreateOrUpdateIngredient> ingredientsToCreateOrUpdate) {
+    @PostMapping
+    public ResponseEntity<Object> saveIngredients(@RequestBody List<CreateOrUpdateIngredient> ingredientsToCreateOrUpdate) {
         List<Ingredient> ingredients = ingredientsToCreateOrUpdate.stream()
                 .map(ingredient -> ingredientRestMapper.toModel(ingredient))
                 .toList();
+        System.out.println("ingredients dans to model controller "+ingredients);
         List<IngredientRest> ingredientsRest = service.saveAll(ingredients).stream()
                 .map(ingredient -> ingredientRestMapper.toRest(ingredient))
                 .toList();
+        System.out.println("ingredient dans rest controller"+ingredientsRest);
         return ResponseEntity.ok().body(ingredientsRest);
     }
 
-    @PutMapping("/ingredients/{ingredientId}/prices")
+    @PutMapping("/{ingredientId}/prices")
     public ResponseEntity<Object> updateIngredientPrices(@PathVariable Long ingredientId, @RequestBody List<CreateIngredientPrice> ingredientPrices) {
         List<IngredientPrice> prices = ingredientPrices.stream()
                 .map(ingredientPrice ->
@@ -94,7 +96,7 @@ public class IngredientRestController {
         return ResponseEntity.ok().body(ingredientRest);
     }
 
-    @PutMapping("/ingredients/{ingredientId}/stockMovements")
+    @PutMapping("/{ingredientId}/stockMovements")
     public ResponseEntity<Object> updateIngredientStockMovement(@PathVariable Long ingredientId, @RequestBody List<StockMovement> stockMovements) {
         List<StockMovement> stockMovements1 = stockMovements.stream()
                 .map(stockMovement ->

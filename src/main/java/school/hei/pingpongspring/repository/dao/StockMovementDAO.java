@@ -10,6 +10,7 @@ import school.hei.pingpongspring.repository.bd.DataSource;
 import school.hei.pingpongspring.service.exception.ServerException;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,33 +118,35 @@ public class StockMovementDAO implements CrudDAO<StockMovement> {
     public List<StockMovement> saveAll(List<StockMovement> entities) {
         List<StockMovement> stockMovements = new ArrayList<>();
         String sql = """
-                insert into stock_movement (id, ingredient_id, type, quantity, unit, date)
-                values (?, ?, ?, ?, ?, ?)
-                on conflict (id) do nothing returning id, ingredient_id, type, quantity, unit, date""";
-        try (Connection connection = db.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
-            entities.forEach(entityToSave -> {
-                try {
+        INSERT INTO stock_movement (id, ingredient_id, type, quantity, unit, date)
+        VALUES (?, ?, ?::movement_type, ?, ?::unit, ?)
+        ON CONFLICT (id) DO NOTHING
+        RETURNING id, ingredient_id, type, quantity, unit, date
+    """;
+
+        try (Connection connection = db.getConnection()) {
+            for (StockMovement entityToSave : entities) {
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setLong(1, entityToSave.getId());
-                    statement.setLong(6, entityToSave.getIngredientId());
-                    statement.setString(4, entityToSave.getType().name());
-                    statement.setDouble(2, entityToSave.getQuantity());
-                    statement.setString(3, entityToSave.getUnit().name());
-                    statement.setTimestamp(5, Timestamp.from(now()));
-                    statement.addBatch(); // group by batch so executed as one query in database
+                    statement.setLong(2, entityToSave.getIngredientId());
+                    statement.setString(3, entityToSave.getType().name());
+                    statement.setDouble(4, entityToSave.getQuantity());
+                    statement.setString(5, entityToSave.getUnit().name());
+                    statement.setTimestamp(6, Timestamp.from(entityToSave.getDate()));
+
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        if (resultSet.next()) {
+                            stockMovements.add(stockMovementMapper.apply(resultSet));
+                        }
+                    }
                 } catch (SQLException e) {
-                    throw new ServerException(e);
-                }
-            });
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    stockMovements.add(stockMovementMapper.apply(resultSet));
+                    throw new ServerException("Erreur lors de l'insertion d'un mouvement de stock "+ e);
                 }
             }
             return stockMovements;
         } catch (SQLException e) {
-            throw new ServerException(e);
+            throw new ServerException("Erreur lors de la connexion à la base de données "+ e);
         }
     }
+
 }

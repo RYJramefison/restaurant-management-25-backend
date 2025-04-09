@@ -32,14 +32,11 @@ public class IngredientRestMapper {
         Ingredient ingredient = new Ingredient();
         ingredient.setId(newIngredient.getId());
         ingredient.setName(newIngredient.getName());
-        try {
-            Ingredient existingIngredient = subjectIngredients.findById(newIngredient.getId());
-            ingredient.addPrices(existingIngredient.getPrices());
-            ingredient.addStockMovements(existingIngredient.getStockMovements());
-        } catch (NotFoundException e) {
-            ingredient.addPrices(new ArrayList<>());
-            ingredient.addStockMovements(new ArrayList<>());
-        }
+        ingredient.setDateTime(newIngredient.getDateTime());
+        ingredient.setUnit(newIngredient.getUnit());
+        ingredient.setPrices(newIngredient.getPrices());
+        ingredient.setStockMovements(newIngredient.getStockMovements());
+        System.out.println("voici les resultat dans to model "+ingredient);
         return ingredient;
     }
 }

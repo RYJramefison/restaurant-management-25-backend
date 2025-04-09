@@ -165,16 +165,18 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
         List<Ingredient> ingredients = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement =
-                         connection.prepareStatement("insert into ingredient (id, name) values (?, ?)"
-                                 + " on conflict (id) do update set name=excluded.name"
-                                 + " returning id, name")) {
+                         connection.prepareStatement("insert into ingredient (id, name, datetime, unit) values (?, ?, ?, ?::unit)"
+                                 + " on conflict (id) do update set name=excluded.name,datetime=excluded.datetime, unit=excluded.unit"
+                                 + " returning id, name,datetime, unit")) {
                 entities.forEach(entityToSave -> {
                     try {
                         statement.setLong(1, entityToSave.getId());
                         statement.setString(2, entityToSave.getName());
+                        statement.setTimestamp(3, Timestamp.from(entityToSave.getDateTime()));
+                        statement.setString(4, entityToSave.getUnit().name());
                         statement.addBatch(); // group by batch so executed as one query in database
                     } catch (SQLException e) {
-                        throw new ServerException(e);
+                        throw new ServerException("save all ingredient Not implemented "+e);
                     }
                     subjectPrice.saveAll((entityToSave.getPrices()));
                     stockMovementDAO.saveAll((entityToSave.getStockMovements()));
