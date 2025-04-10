@@ -14,6 +14,8 @@ import java.util.List;
 public class IngredientPriceDAO implements CrudDAO<IngredientPrice>{
     private final DataSource dataSource;
 
+
+
     @Override
     public IngredientPrice findById(long id) {
         return null;
@@ -26,32 +28,30 @@ public class IngredientPriceDAO implements CrudDAO<IngredientPrice>{
 
     public List<IngredientPrice> saveAll(List<IngredientPrice> entities) {
         List<IngredientPrice> prices = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement("insert into ingredient_price (ingredient_id, price, date) values ( ?, ?, ?)"
-                             + " on conflict (id) do nothing"
-                             + " returning id, ingredient_id, price, date");) {
-            entities.forEach(entityToSave -> {
-                try {
+        String sql = "INSERT INTO ingredient_price (ingredient_id, price, date) " +
+                "VALUES (?, ?, ?) " +
+                "ON CONFLICT (id) DO NOTHING " +
+                "RETURNING id, ingredient_id, price, date";
+
+        try (Connection connection = dataSource.getConnection()) {
+            for (IngredientPrice entityToSave : entities) {
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setLong(1, entityToSave.getIngredientId());
                     statement.setFloat(2, (float) entityToSave.getPrice());
-                    System.out.println("price of prices "+ entityToSave.getPrice());
                     statement.setTimestamp(3, Timestamp.from(entityToSave.getDate()));
-                    statement.addBatch(); // group by batch so executed as one query in database
-                } catch (SQLException e) {
-                    throw new RuntimeException("Save all prices Not implemented "+e);
-                }
-            });
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    prices.add(mapFromResultSet(resultSet));
+                    try (ResultSet resultSet = statement.executeQuery()) {
+                        if (resultSet.next()) {
+                            prices.add(mapFromResultSet(resultSet));
+                        }
+                    }
                 }
             }
             return prices;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error saving ingredient prices: " + e.getMessage(), e);
         }
     }
+
 
     public List<IngredientPrice> findByIdIngredient(Long idIngredient) {
         List<IngredientPrice> prices = new ArrayList<>();

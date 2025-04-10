@@ -3,8 +3,10 @@ package school.hei.pingpongspring.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import school.hei.pingpongspring.repository.dao.IngredientPriceDAO;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -80,10 +82,14 @@ public class Ingredient {
     }
 
     public List<IngredientPrice> addPrices(List<IngredientPrice> prices) {
-        if (getPrices() == null || getPrices().isEmpty()){
-            return prices;
+        if (prices == null || prices.isEmpty()){
+            return getPrices();
         }
         prices.forEach(price -> price.setIngredientId(this.getId()));
+
+        if (getPrices() == null) {
+            this.setPrices(new ArrayList<>());
+        }
         getPrices().addAll(prices);
         return getPrices();
     }

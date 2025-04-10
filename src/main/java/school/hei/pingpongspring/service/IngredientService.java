@@ -7,6 +7,7 @@ import school.hei.pingpongspring.model.IngredientPrice;
 import school.hei.pingpongspring.model.StockMovement;
 import school.hei.pingpongspring.repository.dao.Criteria;
 import school.hei.pingpongspring.repository.dao.IngredientDAO;
+import school.hei.pingpongspring.repository.dao.IngredientPriceDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IngredientService {
     private final IngredientDAO subjectIngredient;
+    private final IngredientPriceDAO subjectPrice;
 
     public Ingredient findById(long id){
         return subjectIngredient.findById(id);
@@ -68,10 +70,14 @@ public class IngredientService {
 
     public Ingredient addPrices(Long ingredientId, List<IngredientPrice> pricesToAdd) {
         Ingredient ingredient = subjectIngredient.findById(ingredientId);
-        ingredient.addPrices(pricesToAdd);
-        List<Ingredient> ingredientsSaved = subjectIngredient.saveAll(List.of(ingredient));
-        return ingredientsSaved.getFirst();
+        pricesToAdd.forEach(p -> p.setIngredientId(ingredientId));
+
+        List<IngredientPrice> savedPrices = subjectPrice.saveAll(pricesToAdd);
+        ingredient.addPrices(savedPrices); // mise à jour de la liste avec les prix réellement enregistrés
+
+        return ingredient;
     }
+
 
     public Ingredient addStockMovement(Long ingredientId, List<StockMovement> stockMovementsToAdd) {
         Ingredient ingredient = subjectIngredient.findById(ingredientId);
