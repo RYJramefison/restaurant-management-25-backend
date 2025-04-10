@@ -3,7 +3,7 @@ package school.hei.pingpongspring.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import school.hei.pingpongspring.repository.dao.OrderCrudOperations;
+import school.hei.pingpongspring.repository.dao.OrderDAO;
 
 import java.time.Instant;
 import java.util.Comparator;
@@ -27,32 +27,32 @@ public class Order {
         return orderStatus.getStatusOrder();
     }
 
-    public StatusOrder getActualStatusByReference(){
-        OrderCrudOperations subjectOrder = new OrderCrudOperations();
-        Order order = subjectOrder.findByReference(this.reference);
-
-        OrderStatus orderStatus = order.getStatus().stream()
-                .max(Comparator.comparing(OrderStatus::getDateTime))
-                .orElse(new OrderStatus(Instant.now(), StatusOrder.CREATE,this.id));
-
-        return orderStatus.getStatusOrder();
-    }
-
-    public List<DishOrder> getDishesOrdersInDB(){
-        OrderCrudOperations subject = new OrderCrudOperations();
-        List<DishOrder> dishOrders = subject.getDishByOrder(this.id);
-
-        return dishOrders;
-    }
-
-    public Double getTotalAmount(){
-        OrderCrudOperations subject = new OrderCrudOperations();
-        List<DishOrder> dishOrders = subject.getDishByOrder(this.id);
-
-        return dishOrders.stream()
-                .mapToDouble(dishOrder -> dishOrder.getQuantity() * dishOrder.getDish().getPrice())
-                .sum();
-    }
+//    public StatusOrder getActualStatusByReference(){
+//        OrderDAO subjectOrder = new OrderDAO();
+//        Order order = subjectOrder.findByReference(this.reference);
+//
+//        OrderStatus orderStatus = order.getStatus().stream()
+//                .max(Comparator.comparing(OrderStatus::getDateTime))
+//                .orElse(new OrderStatus(Instant.now(), StatusOrder.CREATE,this.id));
+//
+//        return orderStatus.getStatusOrder();
+//    }
+//
+//    public List<DishOrder> getDishesOrdersInDB(){
+//        final OrderDAO subject = new OrderDAO();
+//        List<DishOrder> dishOrders = subject.getDishByOrder(this.id);
+//
+//        return dishOrders;
+//    }
+//
+//    public Double getTotalAmount(){
+//        OrderDAO subject = new OrderDAO();
+//        List<DishOrder> dishOrders = subject.getDishByOrder(this.id);
+//
+//        return dishOrders.stream()
+//                .mapToDouble(dishOrder -> dishOrder.getQuantity() * dishOrder.getDish().getPrice())
+//                .sum();
+//    }
 
     public void addDishOrders(List<DishOrder> dishOrders){
         this.setDishOrders(dishOrders);

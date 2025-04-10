@@ -14,7 +14,7 @@ import java.util.List;
 
 @Repository
 
-public class DishOrderCrudOperations implements CrudDAO<DishOrder>{
+public class DishOrderDAO implements CrudDAO<DishOrder>{
     DataSource dataSource ;
     DishDAO subjectDish ;
 

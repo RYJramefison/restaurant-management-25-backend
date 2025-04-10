@@ -2,6 +2,8 @@ package school.hei.pingpongspring.repository.dao;
 
 
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 import school.hei.pingpongspring.model.DishOrder;
 import school.hei.pingpongspring.model.Order;
 import school.hei.pingpongspring.model.OrderStatus;
@@ -12,9 +14,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderCrudOperations implements CrudDAO<Order>{
-    DataSource dataSource = new DataSource();
-    DishOrderCrudOperations subjectDishOrder = new DishOrderCrudOperations();
+@Repository
+@RequiredArgsConstructor
+public class OrderDAO implements CrudDAO<Order>{
+    private final DataSource dataSource ;
+    private final DishOrderDAO subjectDishOrder ;
+
 
     public List<Order> getAll(int page, int size) {
         List<Order> orders = new ArrayList<>();
@@ -45,7 +50,8 @@ public class OrderCrudOperations implements CrudDAO<Order>{
         return orders;
     }
 
-    public Order findById(Long id) {
+    @Override
+    public Order findById(long id) {
         Order order = new Order();
         String sql = "SELECT * FROM \"order\" WHERE id=?";
         try (Connection connection = dataSource.getConnection();
@@ -207,10 +213,6 @@ public class OrderCrudOperations implements CrudDAO<Order>{
 
         }
 
-    @Override
-    public Order findById(long id) {
-        return null;
-    }
 
     @Override
     public void save(Order toSave) {
