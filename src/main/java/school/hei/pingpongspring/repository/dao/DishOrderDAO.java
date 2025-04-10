@@ -100,6 +100,34 @@ public class DishOrderDAO implements CrudDAO<DishOrder>{
         return dishOrder;
     }
 
+    public List<DishOrder> findDishOrderByDish(long dishId){
+        List<DishOrder> dishOrders = new ArrayList<>();
+        String sql ="select * from dish_order where dish_id=?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(sql)) {
+            pstm.setInt(1,(int) dishId);
+            try (ResultSet res = pstm.executeQuery()) {
+                while (res.next()){
+                    DishOrder dishOrder = new DishOrder();
+                    dishOrder.setId(res.getLong("id"));
+
+                    Dish dishOfOrder = subjectDish.findById(res.getLong("dish_id"));
+                    dishOrder.setDish(dishOfOrder);
+
+                    dishOrder.setOrderId(res.getInt("order_id"));
+
+                    dishOrder.setQuantity(res.getInt("quantity"));
+
+                    dishOrder.setStatus(getStatusByDishOrder(res.getLong("id")));
+
+                    dishOrders.add(dishOrder);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("erreur sur la recuperation du dishOrder ",e);
+        }
+        return dishOrders;
+    }
 
     public void saveStatus(DishOrderStatus status){
         String sql = "INSERT INTO dish_order_status (id, date, status, dish_order_id) VALUES (?,?,?::status_order,?)";

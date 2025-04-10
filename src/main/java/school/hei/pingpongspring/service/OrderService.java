@@ -4,6 +4,7 @@ package school.hei.pingpongspring.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import school.hei.pingpongspring.model.DishOrder;
+import school.hei.pingpongspring.model.DishOrderStatus;
 import school.hei.pingpongspring.model.Order;
 import school.hei.pingpongspring.repository.dao.DishOrderDAO;
 import school.hei.pingpongspring.repository.dao.OrderDAO;
@@ -26,5 +27,17 @@ public class OrderService {
 
     public List<DishOrder> updateDishOrder(List<DishOrder>  dishOrderList) throws Exception {
         return dishOrderDAO.saveAll(dishOrderList);
+    }
+
+    public Order updateDishOrderStatus(long orderId, long dishId, DishOrderStatus dishOrderStatus){
+        List<DishOrder> dishOrders = dishOrderDAO.findDishOrderByDish(dishId);
+
+        dishOrders.stream().forEach(dishOrder -> {
+            if (dishOrder.getOrderId() == orderId){
+                dishOrderDAO.saveStatus(dishOrderStatus);
+            }
+        });
+
+        return orderDAO.findById(orderId);
     }
 }

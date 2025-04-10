@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.model.DishOrder;
+import school.hei.pingpongspring.model.DishOrderStatus;
 import school.hei.pingpongspring.service.OrderService;
 
 import java.util.List;
@@ -31,5 +32,15 @@ public class OrderRestController {
     ) throws Exception {
         return ResponseEntity.ok().body(orderService.updateDishOrder(dishOrderList));
     }
+
+    @PutMapping("/{reference}/dishes/{dishId}")
+    public ResponseEntity<Object> updateDishStatus(
+            @PathVariable (required = false) long reference,
+            @PathVariable (required = false) long dishId,
+            @RequestBody DishOrderStatus dishOrderStatus
+            ) {
+        return ResponseEntity.ok().body(orderService.updateDishOrderStatus(reference,dishId,dishOrderStatus));
+    }
+
 
 }
