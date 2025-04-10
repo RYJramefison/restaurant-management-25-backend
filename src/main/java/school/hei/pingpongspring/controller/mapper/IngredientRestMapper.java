@@ -42,4 +42,10 @@ public class IngredientRestMapper {
         System.out.println("voici les resultat dans to model "+ingredient);
         return ingredient;
     }
+
+//    public IngredientRest apply(Ingredient ingredient) {
+//        return new IngredientRest(ingredient.getId(),ingredient.getName(), ingredient.getDateTime(), ingredient.getUnit(),ingredient.getPrices(),ingredient.getStockMovements());
+//
+//    }
+
 }

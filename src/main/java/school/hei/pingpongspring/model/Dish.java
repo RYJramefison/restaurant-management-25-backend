@@ -3,9 +3,11 @@ package school.hei.pingpongspring.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import school.hei.pingpongspring.controller.rest.DishRest;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -54,4 +56,17 @@ public class Dish {
 
         return totalGrossMargin;
     }
+
+    public List<Ingredient> addIngredients(List<Ingredient> ingredientsToAdd) {
+        if (ingredientsToAdd == null || ingredientsToAdd.isEmpty()){
+            return getIngredients();
+        }
+
+        if (getIngredients() == null){
+            this.setIngredients(new ArrayList<>());
+        }
+        getIngredients().addAll(ingredientsToAdd);
+        return getIngredients();
+    }
+
 }
