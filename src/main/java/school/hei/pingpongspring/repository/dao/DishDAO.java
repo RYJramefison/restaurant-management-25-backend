@@ -22,9 +22,31 @@ public class DishDAO implements CrudDAO<Dish> {
     private final IngredientPriceDAO subjectPrice;
     private final StockMovementDAO subjectStockMovement;
 
-//    public List<Dish> getAll(int page, int size){
-//        String sql = ""
-//    }
+    public List<Dish> getAll(int page, int size){
+        List<Dish> dishes = new ArrayList<>();
+        String sql = "SELECT * from dish LIMIT ? OFFSET ?";
+        try (Connection connection = db.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(sql)){
+            pstm.setInt(1, size);
+            pstm.setInt(2, size * (page - 1));
+            try (ResultSet res = pstm.executeQuery()){
+                while (res.next()){
+                    Dish dish = new Dish();
+                    List<Ingredient> ingredients = findIngredientByDish(res.getInt("id"));
+                    dish.setId(res.getInt("id"));
+                    dish.setName(res.getString("name"));
+                    dish.setPrice(res.getInt("price"));
+                    dish.setIngredients(ingredients);
+                    dishes.add(dish);
+                }
+                return dishes;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Not implemented" , e);
+        }
+    }
+
+
     @Override
     public Dish findById(long id) {
         String sql = "SELECT * from dish WHERE id =?";

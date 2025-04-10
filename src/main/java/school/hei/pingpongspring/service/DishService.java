@@ -17,6 +17,10 @@ public class DishService {
         return subjectDish.findById(id);
     }
 
+    public List<Dish> getAll(int page, int size){
+        return subjectDish.getAll(page, size);
+    }
+
     public List<Ingredient> getIngredientByDish(long dishId){
         return subjectDish.findIngredientByDish(dishId);
     }
