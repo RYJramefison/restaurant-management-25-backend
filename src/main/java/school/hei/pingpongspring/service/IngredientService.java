@@ -62,6 +62,10 @@ public class IngredientService {
         return subjectIngredient.saveAll(ingredients);
     }
 
+    public List<Ingredient> updateAll(List<Ingredient> ingredients) {
+        return subjectIngredient.updateAll(ingredients);
+    }
+
     public Ingredient addPrices(Long ingredientId, List<IngredientPrice> pricesToAdd) {
         Ingredient ingredient = subjectIngredient.findById(ingredientId);
         ingredient.addPrices(pricesToAdd);

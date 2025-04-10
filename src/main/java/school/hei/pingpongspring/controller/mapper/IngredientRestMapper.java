@@ -38,12 +38,7 @@ public class IngredientRestMapper {
         ingredient.setUnit(newIngredient.getUnit());
         ingredient.setPrices(newIngredient.getPrices());
         ingredient.setStockMovements(newIngredient.getStockMovements());
-//        ingredient.getStockMovements().forEach(stockMovement -> {
-//            stockMovement.setIngredientId(ingredient.getId());
-//        });
-//        ingredient.getPrices().forEach(ingredientPrice -> {
-//            ingredientPrice.setIngredientId(ingredient.getId());
-//        });
+
         System.out.println("voici les resultat dans to model "+ingredient);
         return ingredient;
     }

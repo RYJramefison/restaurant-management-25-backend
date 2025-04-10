@@ -193,4 +193,37 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
         }
     }
 
+    public List<Ingredient> updateAll(List<Ingredient> entities) {
+        List<Ingredient> ingredients = new ArrayList<>();
+        String sql = "UPDATE ingredient SET name=? WHERE id=?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            for (Ingredient entityToSave : entities) {
+                statement.setString(1, entityToSave.getName());
+                statement.setLong(2, entityToSave.getId());
+                int affectedRows = statement.executeUpdate();
+
+                if (affectedRows > 0) {
+                    // Tu peux ici reconstruire l'ingredient si besoin, ou réutiliser entityToSave
+                    Ingredient saved = entityToSave;
+
+                    // Bien lier les prices et stockMovements à l'ingrédient
+                    entityToSave.getPrices().forEach(p -> p.setIngredientId(entityToSave.getId()));
+                    entityToSave.getStockMovements().forEach(m -> m.setIngredientId(entityToSave.getId()));
+
+                    subjectPrice.saveAll(entityToSave.getPrices());
+                    stockMovementDAO.saveAll(entityToSave.getStockMovements());
+
+                    ingredients.add(saved);
+                }
+            }
+            return ingredients;
+        } catch (SQLException e) {
+            throw new ServerException("Erreur lors de l'enregistrement des ingrédients : " + e);
+        }
+    }
+
+
 }

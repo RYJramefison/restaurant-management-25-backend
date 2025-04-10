@@ -91,7 +91,7 @@ public class IngredientRestController {
                 .map(ingredient -> ingredientRestMapper.toModel(ingredient))
                 .toList();
         System.out.println("ingredients dans to model controller "+ingredients);
-        List<IngredientRest> ingredientsRest = service.saveAll(ingredients).stream()
+        List<IngredientRest> ingredientsRest = service.updateAll(ingredients).stream()
                 .map(ingredient -> ingredientRestMapper.toRest(ingredient))
                 .toList();
         System.out.println("ingredient dans rest controller"+ingredientsRest);
