@@ -118,8 +118,8 @@ public class StockMovementDAO implements CrudDAO<StockMovement> {
     public List<StockMovement> saveAll(List<StockMovement> entities) {
         List<StockMovement> stockMovements = new ArrayList<>();
         String sql = """
-        INSERT INTO stock_movement (id, ingredient_id, type, quantity, unit, date)
-        VALUES (?, ?, ?::movement_type, ?, ?::unit, ?)
+        INSERT INTO stock_movement ( ingredient_id, type, quantity, unit, date)
+        VALUES ( ?, ?::movement_type, ?, ?::unit, ?)
         ON CONFLICT (id) DO NOTHING
         RETURNING id, ingredient_id, type, quantity, unit, date
     """;
@@ -127,12 +127,11 @@ public class StockMovementDAO implements CrudDAO<StockMovement> {
         try (Connection connection = db.getConnection()) {
             for (StockMovement entityToSave : entities) {
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                    statement.setLong(1, entityToSave.getId());
-                    statement.setLong(2, entityToSave.getIngredientId());
-                    statement.setString(3, entityToSave.getType().name());
-                    statement.setDouble(4, entityToSave.getQuantity());
-                    statement.setString(5, entityToSave.getUnit().name());
-                    statement.setTimestamp(6, Timestamp.from(entityToSave.getDate()));
+                    statement.setLong(1, entityToSave.getIngredientId());
+                    statement.setString(2, entityToSave.getType().name());
+                    statement.setDouble(3, entityToSave.getQuantity());
+                    statement.setString(4, entityToSave.getUnit().name());
+                    statement.setTimestamp(5, Timestamp.from(entityToSave.getDate()));
 
                     try (ResultSet resultSet = statement.executeQuery()) {
                         if (resultSet.next()) {

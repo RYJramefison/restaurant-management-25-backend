@@ -25,17 +25,25 @@ public class IngredientRestMapper {
         List<StockMovementRest> stockMovementRests = ingredient.getStockMovements().stream()
                 .map(stockMovement -> stockMovementRestMapper.apply(stockMovement))
                 .toList();
-        return new IngredientRest(ingredient.getId(), ingredient.getName(), prices, stockMovementRests);
+        return new IngredientRest(ingredient.getId(), ingredient.getName(), ingredient.getDateTime(), ingredient.getUnit(), prices, stockMovementRests);
     }
 
     public Ingredient toModel(CreateOrUpdateIngredient newIngredient) {
         Ingredient ingredient = new Ingredient();
-        ingredient.setId(newIngredient.getId());
+        if (newIngredient.getId() != null) {
+            ingredient.setId(newIngredient.getId());
+        }
         ingredient.setName(newIngredient.getName());
         ingredient.setDateTime(newIngredient.getDateTime());
         ingredient.setUnit(newIngredient.getUnit());
         ingredient.setPrices(newIngredient.getPrices());
         ingredient.setStockMovements(newIngredient.getStockMovements());
+//        ingredient.getStockMovements().forEach(stockMovement -> {
+//            stockMovement.setIngredientId(ingredient.getId());
+//        });
+//        ingredient.getPrices().forEach(ingredientPrice -> {
+//            ingredientPrice.setIngredientId(ingredient.getId());
+//        });
         System.out.println("voici les resultat dans to model "+ingredient);
         return ingredient;
     }

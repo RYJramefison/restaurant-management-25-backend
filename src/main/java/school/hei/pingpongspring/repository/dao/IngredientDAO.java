@@ -160,34 +160,37 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
         }
     }
 
-    @SneakyThrows
     public List<Ingredient> saveAll(List<Ingredient> entities) {
         List<Ingredient> ingredients = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement =
-                         connection.prepareStatement("insert into ingredient (id, name, datetime, unit) values (?, ?, ?, ?::unit)"
-                                 + " on conflict (id) do update set name=excluded.name,datetime=excluded.datetime, unit=excluded.unit"
-                                 + " returning id, name,datetime, unit")) {
-                entities.forEach(entityToSave -> {
-                    try {
-                        statement.setLong(1, entityToSave.getId());
-                        statement.setString(2, entityToSave.getName());
-                        statement.setTimestamp(3, Timestamp.from(entityToSave.getDateTime()));
-                        statement.setString(4, entityToSave.getUnit().name());
-                        statement.addBatch(); // group by batch so executed as one query in database
-                    } catch (SQLException e) {
-                        throw new ServerException("save all ingredient Not implemented "+e);
-                    }
-                    subjectPrice.saveAll((entityToSave.getPrices()));
-                    stockMovementDAO.saveAll((entityToSave.getStockMovements()));
-                });
+        String sql = "INSERT INTO ingredient (name, datetime, unit) VALUES (?, ?, ?::unit) " +
+                "RETURNING id, name, datetime, unit";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            for (Ingredient entityToSave : entities) {
+                statement.setString(1, entityToSave.getName());
+                statement.setTimestamp(2, Timestamp.from(entityToSave.getDateTime()));
+                statement.setString(3, entityToSave.getUnit().name());
+
                 try (ResultSet resultSet = statement.executeQuery()) {
-                    while (resultSet.next()) {
-                        ingredients.add(ingredientMapper.apply(resultSet));
+                    if (resultSet.next()) {
+                        Ingredient saved = ingredientMapper.apply(resultSet);
+
+                        entityToSave.getPrices().forEach(p -> p.setIngredientId(saved.getId()));
+                        entityToSave.getStockMovements().forEach(m -> m.setIngredientId(saved.getId()));
+
+                        subjectPrice.saveAll(entityToSave.getPrices());
+                        stockMovementDAO.saveAll(entityToSave.getStockMovements());
+
+                        ingredients.add(saved);
                     }
                 }
-                return ingredients;
             }
+            return ingredients;
+        } catch (SQLException e) {
+            throw new ServerException("Erreur lors de l'enregistrement des ingrédients "+ e);
         }
     }
+
 }

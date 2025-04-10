@@ -85,6 +85,19 @@ public class IngredientRestController {
         return ResponseEntity.ok().body(ingredientsRest);
     }
 
+    @PutMapping
+    public ResponseEntity<Object> updateIngredients(@RequestBody List<CreateOrUpdateIngredient> ingredientsToCreateOrUpdate) {
+        List<Ingredient> ingredients = ingredientsToCreateOrUpdate.stream()
+                .map(ingredient -> ingredientRestMapper.toModel(ingredient))
+                .toList();
+        System.out.println("ingredients dans to model controller "+ingredients);
+        List<IngredientRest> ingredientsRest = service.saveAll(ingredients).stream()
+                .map(ingredient -> ingredientRestMapper.toRest(ingredient))
+                .toList();
+        System.out.println("ingredient dans rest controller"+ingredientsRest);
+        return ResponseEntity.ok().body(ingredientsRest);
+    }
+
     @PutMapping("/{ingredientId}/prices")
     public ResponseEntity<Object> updateIngredientPrices(@PathVariable Long ingredientId, @RequestBody List<CreateIngredientPrice> ingredientPrices) {
         List<IngredientPrice> prices = ingredientPrices.stream()
