@@ -73,9 +73,13 @@ public class Ingredient {
     }
 
     public List<StockMovement> addStockMovements(List<StockMovement> stockMovements) {
+        if (stockMovements == null || stockMovements.isEmpty()){
+            return getStockMovements();
+        }
         stockMovements.forEach(stockMovement -> stockMovement.setIngredientId(this.getId()));
-        if (getStockMovements() == null || getStockMovements().isEmpty()){
-            return stockMovements;
+
+        if (getStockMovements() == null){
+            this.setStockMovements(new ArrayList<>());
         }
         getStockMovements().addAll(stockMovements);
         return getStockMovements();
