@@ -20,10 +20,14 @@ public class DishDAO implements CrudDAO<Dish> {
     private final IngredientDAO ingredientCrud ;
     private final Dish_IngredientDAO dish_ingredientCrud ;
     private final IngredientPriceDAO subjectPrice;
+    private final StockMovementDAO subjectStockMovement;
 
+//    public List<Dish> getAll(int page, int size){
+//        String sql = ""
+//    }
     @Override
     public Dish findById(long id) {
-        String sql = "select id, name, price from dish where id=?";
+        String sql = "SELECT * from dish WHERE id =?";
 
         try (Connection connection = db.getConnection();
              PreparedStatement pstm = connection.prepareStatement(sql)){
@@ -94,8 +98,7 @@ public class DishDAO implements CrudDAO<Dish> {
 
 
     public List<Ingredient> findIngredientByDish(long idDish){
-        String sql = "SELECT i.id, i.name, i.datetime, (i.price * di.required_quantity) as price, di.unit\n" +
-                "FROM ingredient i INNER JOIN dish_ingredient di ON i.id = di.ingredient_id WHERE di.dish_id=?";
+        String sql = "SELECT i.id, i.name, i.datetime, i.unit from ingredient i inner join dish_ingredient di on di.ingredient_id = i.id where di.dish_id=?";
 
         try (Connection connection = db.getConnection();
              PreparedStatement pstm = connection.prepareStatement(sql)){
@@ -106,11 +109,13 @@ public class DishDAO implements CrudDAO<Dish> {
                 while (res.next()){
                     Ingredient ingredient = new Ingredient();
                     List<IngredientPrice> prices = subjectPrice.findByIdIngredient(res.getLong("id"));
+                    List<StockMovement> stockMovements = subjectStockMovement.findByIngredient(res.getLong("id"));
                     ingredient.setId(res.getLong("id"));
                     ingredient.setName(res.getString("name"));
                     ingredient.setDateTime(res.getTimestamp("dateTime").toInstant());
                     ingredient.setPrices(prices);
                     ingredient.setUnit(Unit.valueOf(res.getString("unit")));
+                    ingredient.setStockMovements(stockMovements);
 
                     ingredients.add(ingredient);
                 }
