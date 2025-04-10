@@ -2,11 +2,11 @@ package school.hei.pingpongspring.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import school.hei.pingpongspring.model.DishOrder;
 import school.hei.pingpongspring.service.OrderService;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,4 +23,13 @@ public class OrderRestController {
     public ResponseEntity<Object> findDishesById(@PathVariable (required = false) long id){
         return ResponseEntity.ok().body(orderService.getdishByOrder(id));
     }
+
+    @PutMapping("/{reference}/dishes")
+    public ResponseEntity<Object> updateDishOrder(
+            @PathVariable (required = false) long reference,
+            @RequestBody List<DishOrder> dishOrderList
+    ) throws Exception {
+        return ResponseEntity.ok().body(orderService.updateDishOrder(dishOrderList));
+    }
+
 }
