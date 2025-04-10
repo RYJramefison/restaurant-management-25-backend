@@ -43,9 +43,9 @@ public class IngredientRestMapper {
         return ingredient;
     }
 
-//    public IngredientRest apply(Ingredient ingredient) {
-//        return new IngredientRest(ingredient.getId(),ingredient.getName(), ingredient.getDateTime(), ingredient.getUnit(),ingredient.getPrices(),ingredient.getStockMovements());
-//
-//    }
+    public Ingredient apply(Ingredient ingredient) {
+        return new Ingredient(ingredient.getId(),ingredient.getName(), ingredient.getDateTime(), ingredient.getUnit(),ingredient.getPrices(),ingredient.getStockMovements());
+
+    }
 
 }

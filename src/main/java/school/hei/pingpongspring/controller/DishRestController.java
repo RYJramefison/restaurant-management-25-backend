@@ -47,7 +47,7 @@ public class DishRestController {
                                 ingredient.getPrices(),ingredient.getStockMovements()))
                 .toList();
         Dish dish = dishService.addIngredients(id, ingredients1);
-//        Dish dishRest = dishRestMapper.toRest(dish);
-        return ResponseEntity.ok().body(dish);
+        Dish dishRest = dishRestMapper.toRest(dish);
+        return ResponseEntity.ok().body(dishRest);
     }
 }

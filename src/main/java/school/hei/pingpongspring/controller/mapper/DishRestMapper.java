@@ -16,11 +16,11 @@ public class DishRestMapper {
     @Autowired private StockMovementRestMapper stockMovementRestMapper;
     @Autowired private IngredientRestMapper ingredientRestMapper;
 
-//    public Dish toRest(Dish dish) {
-//        List<IngredientRest> ingredientRests = dish.getIngredients().stream()
-//                .map(ingredient -> ingredientRestMapper.apply(ingredient)).toList();
-//        return new Dish(dish.getId(), dish.getName(), dish.getPrice(), (List<Ingredient>) ingredientRests);
-//    }
+    public Dish toRest(Dish dish) {
+        List<Ingredient> ingredientRests = dish.getIngredients().stream()
+                .map(ingredient -> ingredientRestMapper.apply(ingredient)).toList();
+        return new Dish(dish.getId(), dish.getName(), dish.getPrice(),  ingredientRests);
+    }
 
 
 }
