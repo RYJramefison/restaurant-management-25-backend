@@ -18,4 +18,9 @@ public class OrderRestController {
     public ResponseEntity<Object> findById(@PathVariable (required = false) long reference){
         return ResponseEntity.ok().body(orderService.findById(reference));
     }
+
+    @GetMapping("/dishes/{id}")
+    public ResponseEntity<Object> findDishesById(@PathVariable (required = false) long id){
+        return ResponseEntity.ok().body(orderService.getdishByOrder(id));
+    }
 }

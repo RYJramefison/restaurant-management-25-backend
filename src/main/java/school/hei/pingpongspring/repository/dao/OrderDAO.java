@@ -4,10 +4,7 @@ package school.hei.pingpongspring.repository.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import school.hei.pingpongspring.model.DishOrder;
-import school.hei.pingpongspring.model.Order;
-import school.hei.pingpongspring.model.OrderStatus;
-import school.hei.pingpongspring.model.StatusOrder;
+import school.hei.pingpongspring.model.*;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
 import java.sql.*;
@@ -19,6 +16,7 @@ import java.util.List;
 public class OrderDAO implements CrudDAO<Order>{
     private final DataSource dataSource ;
     private final DishOrderDAO subjectDishOrder ;
+    private final DishDAO subjectDish;
 
 
     public List<Order> getAll(int page, int size) {
@@ -131,7 +129,15 @@ public class OrderDAO implements CrudDAO<Order>{
             pstm.setLong(1,id);
             try (ResultSet res = pstm.executeQuery()){
                 while (res.next()){
-                    DishOrder dishOrder = subjectDishOrder.findById(res.getLong("id"));
+                    DishOrder dishOrder =new DishOrder();
+                    dishOrder.setId(res.getLong("id"));
+                    Dish dish = subjectDish.findById(res.getLong("dish_id"));
+                    dishOrder.setDish(dish);
+
+                    dishOrder.setOrderId(res.getLong("order_id"));
+                    dishOrder.setQuantity(res.getInt("quantity"));
+                    List<DishOrderStatus> dishOrderStatus =  subjectDishOrder.getStatusByDishOrder(res.getLong("id"));
+                    dishOrder.setStatus(dishOrderStatus);
                     dishOrders.add(dishOrder);
                 }
             }

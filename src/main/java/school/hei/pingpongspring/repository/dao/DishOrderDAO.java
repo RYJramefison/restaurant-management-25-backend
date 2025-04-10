@@ -1,6 +1,7 @@
 package school.hei.pingpongspring.repository.dao;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import school.hei.pingpongspring.model.Dish;
 import school.hei.pingpongspring.model.DishOrder;
@@ -13,10 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-
+@RequiredArgsConstructor
 public class DishOrderDAO implements CrudDAO<DishOrder>{
-    DataSource dataSource ;
-    DishDAO subjectDish ;
+    private final DataSource dataSource ;
+    private final DishDAO subjectDish ;
 
 
     public List<DishOrder> getAll(int page, int size) {
