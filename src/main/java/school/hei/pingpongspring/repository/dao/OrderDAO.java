@@ -73,6 +73,34 @@ public class OrderDAO implements CrudDAO<Order>{
         return order;
     }
 
+    public List<Order> findSaleOrder(int X) {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT o.id, o.reference FROM \"order\" o INNER JOIN order_status os ON o.id = os.order_id\n" +
+                "WHERE os.status = 'FINISHED' LIMIT ?;\n";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(sql)){
+            pstm.setInt(1, X);
+            try (ResultSet res = pstm.executeQuery()){
+                while (res.next()){
+                    Order order = new Order();
+                    order.setId(res.getLong("id"));
+                    order.setReference(res.getString("reference"));
+
+                    List<OrderStatus> statuses = getStatusByOrder(res.getLong("id"));
+                    order.setStatus(statuses);
+
+                    List<DishOrder> dishOrders = getDishByOrder(res.getLong("id"));
+                    order.setDishOrders(dishOrders);
+
+                    orders.add(order);
+                }
+            }
+        } catch (SQLException e){
+            throw new RuntimeException("Get all order not implemented ",e);
+        }
+        return orders;
+    }
+
     public Order findByReference(String reference) {
         Order order = new Order();
         String sql = "SELECT * FROM \"order\" WHERE reference=?";
@@ -133,7 +161,6 @@ public class OrderDAO implements CrudDAO<Order>{
                     dishOrder.setId(res.getLong("id"));
                     Dish dish = subjectDish.findById(res.getLong("dish_id"));
                     dishOrder.setDish(dish);
-
                     dishOrder.setOrderId(res.getLong("order_id"));
                     dishOrder.setQuantity(res.getInt("quantity"));
                     List<DishOrderStatus> dishOrderStatus =  subjectDishOrder.getStatusByDishOrder(res.getLong("id"));

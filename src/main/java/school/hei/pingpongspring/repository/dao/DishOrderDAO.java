@@ -10,6 +10,7 @@ import school.hei.pingpongspring.model.StatusOrder;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,12 +75,42 @@ public class DishOrderDAO implements CrudDAO<DishOrder>{
         return dishOrderStatus;
     }
 
-    public DishOrder findById(Long id) {
+    @Override
+    public DishOrder findById(long id) {
         DishOrder dishOrder = new DishOrder();
         String sql = "select id, dish_id, order_id, quantity from dish_order where id=?";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement pstm = connection.prepareStatement(sql)) {
             pstm.setLong(1, id);
+            try (ResultSet res = pstm.executeQuery()) {
+                while (res.next()){
+                    dishOrder.setId(res.getLong("id"));
+
+                    Dish dishOfOrder = subjectDish.findById(res.getLong("dish_id"));
+                    dishOrder.setDish(dishOfOrder);
+
+                    dishOrder.setOrderId(res.getLong("order_id"));
+
+                    dishOrder.setQuantity(res.getInt("quantity"));
+
+                    dishOrder.setStatus(getStatusByDishOrder(id));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("erreur sur la recuperation du dishOrder ",e);
+        }
+        return dishOrder;
+    }
+
+    public List<DishOrder> findSalesDishOrder(int X, Instant dateFirst, Instant dateLast) {
+        DishOrder dishOrder = new DishOrder();
+        String sql = "select id, dish_id, order_id, quantity from dish_order dio inner join dish_order_status dios\n" +
+                "    on dio.id = dios.dish_order_id where dios.status='CONFIRMED' and dios.date>=? and dios.date <=? LIMIT ? ";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(sql)) {
+            pstm.setTimestamp(1, Timestamp.from(dateFirst));
+            pstm.setTimestamp(2, Timestamp.from(dateLast));
+            pstm.setInt(3, X);
             try (ResultSet res = pstm.executeQuery()) {
                 while (res.next()){
                     dishOrder.setId(res.getLong("id"));
@@ -129,16 +160,17 @@ public class DishOrderDAO implements CrudDAO<DishOrder>{
         return dishOrders;
     }
 
+
+
     public void saveStatus(DishOrderStatus status){
-        String sql = "INSERT INTO dish_order_status (id, date, status, dish_order_id) VALUES (?,?,?::status_order,?)";
+        String sql = "INSERT INTO dish_order_status ( date, status, dish_order_id) VALUES (?,?::status_order,?)";
 
         try (Connection connection = dataSource.getConnection();
             PreparedStatement pstm = connection.prepareStatement(sql)){
 
-            pstm.setLong(1,status.getId());
-            pstm.setTimestamp(2, Timestamp.from(status.getDateTime()));
-            pstm.setString(3, String.valueOf(status.getStatusOrder()));
-            pstm.setLong(4, status.getDishOrderId());
+            pstm.setTimestamp(1, Timestamp.from(status.getDateTime()));
+            pstm.setString(2, String.valueOf(status.getStatusOrder()));
+            pstm.setLong(3, status.getDishOrderId());
 
             pstm.executeUpdate();
         } catch (SQLException e) {
@@ -173,10 +205,8 @@ public class DishOrderDAO implements CrudDAO<DishOrder>{
         return dishOrders;
     }
 
-    @Override
-    public DishOrder findById(long id) {
-        return null;
-    }
+
+
 
     @Override
     public void save(DishOrder toSave) {
