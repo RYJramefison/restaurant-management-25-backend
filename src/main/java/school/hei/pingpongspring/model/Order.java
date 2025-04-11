@@ -3,11 +3,14 @@ package school.hei.pingpongspring.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import school.hei.pingpongspring.repository.bd.DataSource;
 import school.hei.pingpongspring.repository.dao.OrderDAO;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Data
@@ -53,6 +56,30 @@ public class Order {
 //                .mapToDouble(dishOrder -> dishOrder.getQuantity() * dishOrder.getDish().getPrice())
 //                .sum();
 //    }
+
+    public Duration DurationDishOrder(long dishOrdersId){
+
+            Optional<DishOrder> dishOrder = this.dishOrders.stream()
+                    .filter(d -> d.getId() == dishOrdersId)
+                    .findFirst();
+
+            List<DishOrderStatus> statuses = dishOrder.get().getStatus();
+
+            Optional<DishOrderStatus> statusInProgress = statuses.stream()
+                    .filter(s -> s.getStatusOrder() == StatusOrder.IN_PROGRESS)
+                    .findFirst();
+
+            Optional<DishOrderStatus> statusFinished = statuses.stream()
+                    .filter(s -> s.getStatusOrder() == StatusOrder.FINISHED)
+                    .findFirst();
+
+
+            return Duration.between(
+                    statusInProgress.get().getDateTime(),
+                    statusFinished.get().getDateTime()
+            );
+
+    }
 
     public void addDishOrders(List<DishOrder> dishOrders){
         this.setDishOrders(dishOrders);
