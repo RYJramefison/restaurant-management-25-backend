@@ -1,0 +1,180 @@
+openapi: 3.0.3
+info:
+  title: Order specification
+  description: Order specification
+  version: 1.0.0
+servers:
+  - url: 'https'
+paths:
+  /orders/{reference}:
+    get:
+      summary: Get order by reference
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Order found successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/dishes/{id}:
+    get:
+      summary: Get dishes by order ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dishes found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DishOrder'
+
+  /orders/{reference}/dishes:
+    put:
+      summary: Update list of dishes for an order
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: List of DishOrder objects
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DishOrder'
+      responses:
+        '200':
+          description: Dish orders updated successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DishOrder'
+
+  /orders/{reference}/dishes/{dishId}:
+    put:
+      summary: Update status of a specific dish in an order
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: dishId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: New dish order status
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DishOrderStatus'
+      responses:
+        '200':
+          description: Dish order status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+components:
+  schemas:
+    Dish:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+          format: float
+
+    DishOrderStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+        dateTime:
+          type: string
+          format: date-time
+        statusOrder:
+          $ref: '#/components/schemas/StatusOrder'
+        dishOrderId:
+          type: integer
+
+    DishOrder:
+      type: object
+      properties:
+        id:
+          type: integer
+        dish:
+          $ref: '#/components/schemas/Dish'
+        orderId:
+          type: integer
+        quantity:
+          type: integer
+        status:
+          type: array
+          items:
+            $ref: '#/components/schemas/DishOrderStatus'
+
+    OrderStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+        dateTime:
+          type: string
+          format: date-time
+        statusOrder:
+          $ref: '#/components/schemas/StatusOrder'
+        orderId:
+          type: integer
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        reference:
+          type: string
+        status:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderStatus'
+        dishOrders:
+          type: array
+          items:
+            $ref: '#/components/schemas/DishOrder'
+
+    StatusOrder:
+      type: string
+      enum:
+        - CREATE
+        - CONFIRMED
+        - IN_PROGRESS
+        - FINISHED
+        - DELIVER

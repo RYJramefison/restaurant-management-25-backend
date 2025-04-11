@@ -1,5 +1,6 @@
 package school.hei.pingpongspring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,9 @@ public class Ingredient {
     private String name;
     private Instant dateTime;
     private Unit unit;
+    @JsonIgnore
     private List<IngredientPrice> prices;
+    @JsonIgnore
     private List<StockMovement> stockMovements;
 
 

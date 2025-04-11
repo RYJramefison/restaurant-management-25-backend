@@ -1,0 +1,159 @@
+openapi: 3.0.3
+info:
+  title: Dish api
+  description: Dish api
+  version: 1.0.0
+servers:
+  - url: 'https'
+paths:
+  /dishes:
+    get:
+      summary: Retrieve the list of dishes
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Paginated list of dishes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Dish'
+
+  /dishes/{id}:
+    get:
+      summary: Retrieve a dish by its ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dish details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+
+  /dishes/ingredients/{id}:
+    get:
+      summary: Retrieve the ingredients of a dish
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of ingredients associated with the dish
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+
+  /dishes/{id}/ingredients:
+    put:
+      summary: Update the ingredients of a dish
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: List of new ingredients to add to the dish
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Ingredient'
+      responses:
+        '200':
+          description: Updated dish
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dish'
+
+components:
+  schemas:
+    Dish:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: integer
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ingredient'
+
+    Ingredient:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        dateTime:
+          type: string
+          format: date-time
+        unit:
+          type: string
+          enum: [G, L, U]
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/IngredientPrice'
+        stockMovements:
+          type: array
+          items:
+            $ref: '#/components/schemas/StockMovement'
+
+    IngredientPrice:
+      type: object
+      properties:
+        ingredientId:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        price:
+          type: number
+          format: double
+
+    StockMovement:
+      type: object
+      properties:
+        id:
+          type: integer
+        quantity:
+          type: number
+        date:
+          type: string
+          format: date-time
+        type:
+          type: string
+          enum: [IN, OUT]
