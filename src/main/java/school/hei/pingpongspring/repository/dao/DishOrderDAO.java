@@ -93,7 +93,7 @@ public class DishOrderDAO implements CrudDAO<DishOrder>{
 
                     dishOrder.setQuantity(res.getInt("quantity"));
 
-                    dishOrder.setStatus(getStatusByDishOrder(id));
+                    dishOrder.setStatus(getStatusByDishOrder(res.getLong("id")));
                 }
             }
         } catch (SQLException e) {
@@ -103,7 +103,7 @@ public class DishOrderDAO implements CrudDAO<DishOrder>{
     }
 
     public List<DishOrder> findSalesDishOrder(int X, Instant dateFirst, Instant dateLast) {
-        DishOrder dishOrder = new DishOrder();
+        List<DishOrder> dishOrders = new ArrayList<>();
         String sql = "select id, dish_id, order_id, quantity from dish_order dio inner join dish_order_status dios\n" +
                 "    on dio.id = dios.dish_order_id where dios.status='CONFIRMED' and dios.date>=? and dios.date <=? LIMIT ? ";
         try (Connection connection = dataSource.getConnection();
@@ -113,6 +113,7 @@ public class DishOrderDAO implements CrudDAO<DishOrder>{
             pstm.setInt(3, X);
             try (ResultSet res = pstm.executeQuery()) {
                 while (res.next()){
+                    DishOrder dishOrder = new DishOrder();
                     dishOrder.setId(res.getLong("id"));
 
                     Dish dishOfOrder = subjectDish.findById(res.getLong("dish_id"));
@@ -122,13 +123,14 @@ public class DishOrderDAO implements CrudDAO<DishOrder>{
 
                     dishOrder.setQuantity(res.getInt("quantity"));
 
-                    dishOrder.setStatus(getStatusByDishOrder(id));
+                    dishOrder.setStatus(getStatusByDishOrder(res.getLong("id")));
+                    dishOrders.add(dishOrder);
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException("erreur sur la recuperation du dishOrder ",e);
         }
-        return dishOrder;
+        return dishOrders;
     }
 
     public List<DishOrder> findDishOrderByDish(long dishId){
