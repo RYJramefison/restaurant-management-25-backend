@@ -22,7 +22,12 @@ public class DishOrder {
     @JsonIgnore
     private List<DishOrderStatus> status;
 
-
+    public DishOrder(Dish dish, long orderId, int quantity, List<DishOrderStatus> status) {
+        this.dish = dish;
+        this.orderId = orderId;
+        this.quantity = quantity;
+        this.status = status;
+    }
 
     public StatusOrder getActualStatus(){
         DishOrderStatus dishOrderStatus = this.getStatus().stream()

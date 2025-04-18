@@ -3,13 +3,18 @@ package school.hei.pingpongspring.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import school.hei.pingpongspring.controller.rest.AddOrUpdateDishOrders;
+import school.hei.pingpongspring.controller.rest.DishOrderRest;
 import school.hei.pingpongspring.model.DishOrder;
 import school.hei.pingpongspring.model.DishOrderStatus;
 import school.hei.pingpongspring.model.Order;
+import school.hei.pingpongspring.repository.dao.DishDAO;
 import school.hei.pingpongspring.repository.dao.DishOrderDAO;
 import school.hei.pingpongspring.repository.dao.OrderDAO;
 
 import java.sql.SQLException;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,6 +22,7 @@ import java.util.List;
 public class OrderService {
     private final OrderDAO orderDAO;
     private final DishOrderDAO dishOrderDAO;
+    private final DishDAO dishDAO;
 
     public Order findById(long id){
         return orderDAO.findById(id);
@@ -26,8 +32,18 @@ public class OrderService {
         return orderDAO.getDishByOrder(id);
     }
 
-    public List<DishOrder> updateDishOrder(List<DishOrder>  dishOrderList) throws Exception {
-        return dishOrderDAO.saveAll(dishOrderList);
+    public List<DishOrder> updateDishOrder(long reference, List<AddOrUpdateDishOrders>  dishOrderList) throws Exception {
+        List<DishOrder> dishOrders = new ArrayList<>();
+        for (AddOrUpdateDishOrders addOrUpdateDishOrders : dishOrderList) {
+            for (DishOrderRest dish : addOrUpdateDishOrders.getDishes()) {
+
+                DishOrderStatus dishOrderStatus = new DishOrderStatus(Instant.now(),addOrUpdateDishOrders.getOrderStatus());
+
+                DishOrder dishOrder = new DishOrder(dishDAO.findById(dish.getDishIdentifier()), reference, dish.getQuantityOrdered(), List.of(dishOrderStatus));
+                dishOrders.add(dishOrder);
+            }
+        }
+        return dishOrderDAO.saveAll(dishOrders);
     }
 
     public Order updateDishOrderStatus(long orderId, long dishId, DishOrderStatus dishOrderStatus){

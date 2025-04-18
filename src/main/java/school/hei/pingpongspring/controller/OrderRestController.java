@@ -3,6 +3,7 @@ package school.hei.pingpongspring.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import school.hei.pingpongspring.controller.rest.AddOrUpdateDishOrders;
 import school.hei.pingpongspring.model.DishOrder;
 import school.hei.pingpongspring.model.DishOrderStatus;
 import school.hei.pingpongspring.model.Order;
@@ -36,9 +37,9 @@ public class OrderRestController {
     @PutMapping("/{reference}/dishes")
     public ResponseEntity<Object> updateDishOrder(
             @PathVariable (required = false) long reference,
-            @RequestBody List<DishOrder> dishOrderList
+            @RequestBody List<AddOrUpdateDishOrders> dishOrderList
     ) throws Exception {
-        return ResponseEntity.ok().body(orderService.updateDishOrder(dishOrderList));
+        return ResponseEntity.ok().body(orderService.updateDishOrder(reference, dishOrderList));
     }
 
     @PutMapping("/{reference}/dishes/{dishId}")

@@ -23,4 +23,8 @@ public class DishOrderStatus {
         this.dishOrderId = dishOrderId;
     }
 
+    public DishOrderStatus(Instant dateTime, StatusOrder statusOrder) {
+        this.dateTime = dateTime;
+        this.statusOrder = statusOrder;
+    }
 }

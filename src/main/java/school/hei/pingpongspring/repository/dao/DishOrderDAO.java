@@ -165,12 +165,12 @@ public class DishOrderDAO implements CrudDAO<DishOrder>{
 
 
     public void saveStatus(DishOrderStatus status){
-        String sql = "INSERT INTO dish_order_status ( date, status, dish_order_id) VALUES (?,?::status_order,?)";
+        String sql = "INSERT INTO dish_order_status (date, status, dish_order_id) VALUES (?,?::status_order,?)";
 
         try (Connection connection = dataSource.getConnection();
             PreparedStatement pstm = connection.prepareStatement(sql)){
 
-            pstm.setTimestamp(1, Timestamp.from(status.getDateTime()));
+            pstm.setTimestamp(1, Timestamp.from(Instant.now()));
             pstm.setString(2, String.valueOf(status.getStatusOrder()));
             pstm.setLong(3, status.getDishOrderId());
 
@@ -181,30 +181,36 @@ public class DishOrderDAO implements CrudDAO<DishOrder>{
     }
 
     public List<DishOrder> saveAll(List<DishOrder> entities) throws SQLException {
-        List<DishOrder> dishOrders = new ArrayList<>();
-        String sql = "INSERT INTO dish_order (id, dish_id, order_id, quantity) VALUES (?,?,?,?)";
+        List<DishOrder> savedDishOrders = new ArrayList<>();
+        String sql = "INSERT INTO dish_order (dish_id, order_id, quantity) VALUES (?, ?, ?)";
 
         try (Connection connection = dataSource.getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql)){
-            entities.forEach( entity -> {
-                try {
-                    pstm.setLong(1, entity.getId());
-                    pstm.setLong(2, entity.getDish().getId());
-                    pstm.setLong(3, entity.getOrderId());
-                    pstm.setInt(4, entity.getQuantity());
-                    pstm.executeUpdate();
+             PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-                    entity.getStatus().forEach(status -> {
-                        saveStatus(status);
-                    });
+            for (DishOrder entity : entities) {
+                pstm.setLong(1, entity.getDish().getId());
+                pstm.setLong(2, entity.getOrderId());
+                pstm.setInt(3, entity.getQuantity());
+                pstm.executeUpdate();
 
-                    dishOrders.add(entity);
-                } catch (SQLException e) {
-                    throw new RuntimeException("erreur sur l'ajout du dishOrder ",e);
+                try (ResultSet generatedKeys = pstm.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        long generatedKey = generatedKeys.getLong(1);
+                        entity.setId(generatedKey);
+
+                        for (DishOrderStatus status : entity.getStatus()) {
+                            status.setDishOrderId(generatedKey);
+                            saveStatus(status);
+                        }
+                    } else {
+                        throw new SQLException("Échec de la récupération de l'ID généré.");
+                    }
                 }
-            });
+
+                savedDishOrders.add(entity);
+            }
         }
-        return dishOrders;
+        return savedDishOrders;
     }
 
 
