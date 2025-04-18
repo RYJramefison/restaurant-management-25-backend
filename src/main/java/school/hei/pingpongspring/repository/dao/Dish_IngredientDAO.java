@@ -67,7 +67,7 @@ public class Dish_IngredientDAO {
         List<DishIngredient> dishIngredients = new ArrayList<>();
         DishIngredient dishIngredient = new DishIngredient();
         String sql = "INSERT INTO dish_ingredient (dish_id, ingredient_id, required_quantity, unit) VALUES (?,?,?,?::unit)" +
-                " on conflict (id) do update set required_quantity=excluded.required_quantity, unit=excluded.unit";
+                " on conflict (dish_id,ingredient_id) do update set required_quantity=excluded.required_quantity, unit=excluded.unit";
 
         try (Connection connection = db.getConnection();
              PreparedStatement pstm = connection.prepareStatement(sql)){

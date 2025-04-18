@@ -164,7 +164,7 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
     public List<Ingredient> saveAll(List<Ingredient> entities) {
         List<Ingredient> ingredients = new ArrayList<>();
         String sql = "INSERT INTO ingredient (id, name, datetime, unit) VALUES (?, ?, ?, ?::unit) " +
-                "RETURNING id, name, datetime, unit";
+                "on conflict (id) do update set name=excluded.name RETURNING id, name, datetime, unit ";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
