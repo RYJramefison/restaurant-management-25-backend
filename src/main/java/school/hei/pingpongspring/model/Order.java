@@ -9,6 +9,7 @@ import school.hei.pingpongspring.repository.dao.OrderDAO;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -22,16 +23,20 @@ public class Order {
     private String reference;
     @JsonIgnore
     private List<OrderStatus> status;
-    private List<DishOrder> dishOrders;
+    private List<DishOrder> dishOrders = new ArrayList<>();
 
     public Order(String reference) {
         this.reference = reference;
     }
 
-    public StatusOrder getActualStatus(){
+    public StatusOrder getActualStatus() {
+        if (this.getStatus() == null || this.getStatus().isEmpty()) {
+            return new OrderStatus(Instant.now(), StatusOrder.CREATE, this.id).getStatusOrder();
+        }
+
         OrderStatus orderStatus = this.getStatus().stream()
                 .max(Comparator.comparing(OrderStatus::getDateTime))
-                .orElse(new OrderStatus(Instant.now(), StatusOrder.CREATE,this.id));
+                .orElse(new OrderStatus(Instant.now(), StatusOrder.CREATE, this.id));
 
         return orderStatus.getStatusOrder();
     }
