@@ -1,5 +1,6 @@
 package school.hei.pingpongspring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 
 public class IngredientPrice {
     private long id;
+    @JsonIgnore
     private long ingredientId;
     private double price;
     private Instant date;

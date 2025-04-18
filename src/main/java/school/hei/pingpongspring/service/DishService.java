@@ -3,9 +3,11 @@ package school.hei.pingpongspring.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import school.hei.pingpongspring.model.Dish;
+import school.hei.pingpongspring.model.DishIngredient;
 import school.hei.pingpongspring.model.Ingredient;
 import school.hei.pingpongspring.model.StockMovement;
 import school.hei.pingpongspring.repository.dao.DishDAO;
+import school.hei.pingpongspring.repository.dao.Dish_IngredientDAO;
 import school.hei.pingpongspring.repository.dao.IngredientDAO;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
 public class DishService {
     private final DishDAO subjectDish;
     private final IngredientDAO subjectIngredient;
+    private final Dish_IngredientDAO subjectDishIngredient;
 
 
     public Dish findById(long id) {
@@ -33,8 +36,11 @@ public class DishService {
         Dish dish = subjectDish.findById(dishId);
 
         List<Ingredient> savedIngredients = subjectIngredient.saveAll(ingredientsToAdd);
-
-        dish.addIngredients(ingredientsToAdd);
+        for (Ingredient savedIngredient : savedIngredients) {
+            DishIngredient dishIngredient = new DishIngredient(dishId,savedIngredient.getId(), 2.00,savedIngredient.getUnit());
+            subjectDishIngredient.save(dishIngredient);
+        }
+        dish.addIngredients(savedIngredients);
         return dish;
     }
 }

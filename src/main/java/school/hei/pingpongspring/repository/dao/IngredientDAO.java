@@ -11,6 +11,7 @@ import school.hei.pingpongspring.repository.bd.DataSource;
 import school.hei.pingpongspring.service.exception.ServerException;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,18 +171,17 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
 
             for (Ingredient entityToSave : entities) {
                 statement.setString(1, entityToSave.getName());
-                statement.setTimestamp(2, Timestamp.from(entityToSave.getDateTime()));
+                statement.setTimestamp(2, Timestamp.from(Instant.now()));
                 statement.setString(3, entityToSave.getUnit().name());
 
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
                         Ingredient saved = ingredientMapper.apply(resultSet);
-
-                        entityToSave.getPrices().forEach(p -> p.setIngredientId(saved.getId()));
-                        entityToSave.getStockMovements().forEach(m -> m.setIngredientId(saved.getId()));
-
-                        subjectPrice.saveAll(entityToSave.getPrices());
-                        stockMovementDAO.saveAll(entityToSave.getStockMovements());
+//                        entityToSave.getPrices().forEach(p -> p.setIngredientId(saved.getId()));
+//                        entityToSave.getStockMovements().forEach(m -> m.setIngredientId(saved.getId()));
+//
+//                        subjectPrice.saveAll(entityToSave.getPrices());
+//                        stockMovementDAO.saveAll(entityToSave.getStockMovements());
 
                         ingredients.add(saved);
                     }

@@ -40,11 +40,10 @@ public class DishRestController {
     }
 
     @PutMapping("/{id}/ingredients")
-    public ResponseEntity<Object> updateingredientsInDish(@PathVariable Long id, @RequestBody List<Ingredient> ingredients) {
+    public ResponseEntity<Object> updateIngredientsInDish(@PathVariable Long id, @RequestBody List<Ingredient> ingredients) {
         List<Ingredient> ingredients1 = ingredients.stream()
                 .map(ingredient ->
-                        new Ingredient(ingredient.getId(), ingredient.getName(), ingredient.getDateTime(), ingredient.getUnit(),
-                                ingredient.getPrices(),ingredient.getStockMovements()))
+                        new Ingredient(ingredient.getId(), ingredient.getName(), ingredient.getUnit()))
                 .toList();
         Dish dish = dishService.addIngredients(id, ingredients1);
         Dish dishRest = dishRestMapper.toRest(dish);

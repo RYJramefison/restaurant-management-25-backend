@@ -21,11 +21,21 @@ public class Ingredient {
     private String name;
     private Instant dateTime;
     private Unit unit;
-//    @JsonIgnore
+    @JsonIgnore
     private List<IngredientPrice> prices;
-//    @JsonIgnore
+    @JsonIgnore
     private List<StockMovement> stockMovements;
 
+    public Ingredient(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Ingredient(long id, String name, Unit unit) {
+        this.id = id;
+        this.name = name;
+        this.unit = unit;
+    }
 
     public double getAvailableQuantity(){
         Instant latestDate = Instant.now();

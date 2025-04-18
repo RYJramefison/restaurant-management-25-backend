@@ -16,6 +16,7 @@ import java.util.List;
 public class DishOrder {
     private long id;
     private Dish dish;
+    @JsonIgnore
     private long orderId;
     private int quantity;
     @JsonIgnore

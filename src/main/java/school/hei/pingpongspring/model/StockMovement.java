@@ -1,5 +1,6 @@
 package school.hei.pingpongspring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import java.time.Instant;
 
 public class StockMovement {
     private long id;
+    @JsonIgnore
     private long ingredientId;
     private MovementType type;
     private double quantity;
