@@ -5,8 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.model.DishOrder;
 import school.hei.pingpongspring.model.DishOrderStatus;
+import school.hei.pingpongspring.model.Order;
 import school.hei.pingpongspring.service.OrderService;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -18,6 +20,12 @@ public class OrderRestController {
     @GetMapping("/{reference}")
     public ResponseEntity<Object> findById(@PathVariable (required = false) long reference){
         return ResponseEntity.ok().body(orderService.findById(reference));
+    }
+
+    @PostMapping("/{reference}")
+    public ResponseEntity<Object> saveOrder(@PathVariable (required = false) String reference) throws SQLException {
+        Order order = new Order(reference);
+        return ResponseEntity.ok().body(orderService.saveOrder(order));
     }
 
     @GetMapping("/dishes/{id}")

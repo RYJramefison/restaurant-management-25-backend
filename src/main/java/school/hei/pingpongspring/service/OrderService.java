@@ -9,6 +9,7 @@ import school.hei.pingpongspring.model.Order;
 import school.hei.pingpongspring.repository.dao.DishOrderDAO;
 import school.hei.pingpongspring.repository.dao.OrderDAO;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -39,5 +40,9 @@ public class OrderService {
         });
 
         return orderDAO.findById(orderId);
+    }
+
+    public Order saveOrder(Order order) throws SQLException {
+        return orderDAO.saveOrder(order);
     }
 }

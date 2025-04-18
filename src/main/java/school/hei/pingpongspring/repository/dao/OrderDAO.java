@@ -75,6 +75,11 @@ public class OrderDAO implements CrudDAO<Order>{
         return order;
     }
 
+    @Override
+    public void save(Order toSave) {
+
+    }
+
     public List<Order> findSaleOrder(int X) {
         List<Order> orders = new ArrayList<>();
         String sql = "SELECT o.id, o.reference FROM \"order\" o INNER JOIN order_status os ON o.id = os.order_id\n" +
@@ -204,12 +209,16 @@ public class OrderDAO implements CrudDAO<Order>{
                     pstm.setString(2,entity.getReference());
                     pstm.executeUpdate();
 
-                    List<DishOrder> dishOrders = entity.getDishOrders();
-                    subjectDishOrder.saveAll(dishOrders);
+                    if (entity.getStatus() != null){
+                        entity.getStatus().forEach(status -> {
+                            saveStatus(status);
+                        });
+                    }
+                    if (entity.getDishOrders() != null){
+                        List<DishOrder> dishOrders = entity.getDishOrders();
+                        subjectDishOrder.saveAll(dishOrders);
+                    }
 
-                    entity.getStatus().forEach(status -> {
-                        saveStatus(status);
-                    });
 
                     orders.add(entity);
 
@@ -249,8 +258,36 @@ public class OrderDAO implements CrudDAO<Order>{
         }
 
 
-    @Override
-    public void save(Order toSave) {
 
+
+    public Order saveOrder(Order toSave) throws SQLException {
+
+
+
+        String sql = "INSERT INTO \"order\" (reference) VALUES (?) RETURNING id, reference";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            pstm.setString(1, toSave.getReference());
+            int affectedRows = pstm.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating order failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = pstm.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    toSave.setId(generatedKeys.getLong(1));
+                } else {
+                    throw new SQLException("Creating order failed, no ID obtained.");
+                }
+            }
+
+            return toSave;
+
+        } catch (SQLException e) {
+            throw new SQLException("Failed to save order: " + e.getMessage(), e);
+        }
     }
 }

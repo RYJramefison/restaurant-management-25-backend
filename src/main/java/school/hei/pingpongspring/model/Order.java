@@ -24,6 +24,10 @@ public class Order {
     private List<OrderStatus> status;
     private List<DishOrder> dishOrders;
 
+    public Order(String reference) {
+        this.reference = reference;
+    }
+
     public StatusOrder getActualStatus(){
         OrderStatus orderStatus = this.getStatus().stream()
                 .max(Comparator.comparing(OrderStatus::getDateTime))
