@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.controller.mapper.DishRestMapper;
+import school.hei.pingpongspring.controller.rest.CreateOrUpdateDishIngredient;
 import school.hei.pingpongspring.controller.rest.DishRest;
 import school.hei.pingpongspring.controller.rest.IngredientRest;
 import school.hei.pingpongspring.model.Dish;
@@ -40,10 +41,10 @@ public class DishRestController {
     }
 
     @PutMapping("/{id}/ingredients")
-    public ResponseEntity<Object> updateIngredientsInDish(@PathVariable Long id, @RequestBody List<Ingredient> ingredients) {
-        List<Ingredient> ingredients1 = ingredients.stream()
+    public ResponseEntity<Object> updateIngredientsInDish(@PathVariable Long id, @RequestBody List<CreateOrUpdateDishIngredient> ingredients) {
+        List<CreateOrUpdateDishIngredient> ingredients1 = ingredients.stream()
                 .map(ingredient ->
-                        new Ingredient(ingredient.getId(), ingredient.getName(), ingredient.getUnit()))
+                        new CreateOrUpdateDishIngredient(ingredient.getId(), ingredient.getName(), ingredient.getUnit(), ingredient.getRequiredQuantity()))
                 .toList();
         Dish dish = dishService.addIngredients(id, ingredients1);
         Dish dishRest = dishRestMapper.toRest(dish);

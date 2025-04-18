@@ -163,16 +163,17 @@ public class IngredientDAO implements CrudDAO<Ingredient> {
 
     public List<Ingredient> saveAll(List<Ingredient> entities) {
         List<Ingredient> ingredients = new ArrayList<>();
-        String sql = "INSERT INTO ingredient (name, datetime, unit) VALUES (?, ?, ?::unit) " +
+        String sql = "INSERT INTO ingredient (id, name, datetime, unit) VALUES (?, ?, ?, ?::unit) " +
                 "RETURNING id, name, datetime, unit";
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
 
             for (Ingredient entityToSave : entities) {
-                statement.setString(1, entityToSave.getName());
-                statement.setTimestamp(2, Timestamp.from(Instant.now()));
-                statement.setString(3, entityToSave.getUnit().name());
+                statement.setLong(1, entityToSave.getId());
+                statement.setString(2, entityToSave.getName());
+                statement.setTimestamp(3, Timestamp.from(Instant.now()));
+                statement.setString(4, entityToSave.getUnit().name());
 
                 try (ResultSet resultSet = statement.executeQuery()) {
                     if (resultSet.next()) {
