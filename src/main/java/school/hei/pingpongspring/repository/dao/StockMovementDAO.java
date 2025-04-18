@@ -131,7 +131,7 @@ public class StockMovementDAO implements CrudDAO<StockMovement> {
                     statement.setString(2, entityToSave.getType().name());
                     statement.setDouble(3, entityToSave.getQuantity());
                     statement.setString(4, entityToSave.getUnit().name());
-                    statement.setTimestamp(5, Timestamp.from(entityToSave.getDate()));
+                    statement.setTimestamp(5, Timestamp.from(Instant.now()));
 
                     try (ResultSet resultSet = statement.executeQuery()) {
                         if (resultSet.next()) {

@@ -8,9 +8,6 @@ import school.hei.pingpongspring.controller.rest.PriceRest;
 import school.hei.pingpongspring.controller.rest.StockMovementRest;
 import school.hei.pingpongspring.model.Ingredient;
 import school.hei.pingpongspring.repository.dao.IngredientDAO;
-import school.hei.pingpongspring.service.exception.NotFoundException;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -45,7 +42,6 @@ public class IngredientRestMapper {
 
     public Ingredient apply(Ingredient ingredient) {
         return new Ingredient(ingredient.getId(),ingredient.getName(), ingredient.getDateTime(), ingredient.getUnit(),ingredient.getPrices(),ingredient.getStockMovements());
-
     }
 
 }

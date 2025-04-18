@@ -21,9 +21,9 @@ public class Ingredient {
     private String name;
     private Instant dateTime;
     private Unit unit;
-    @JsonIgnore
+//    @JsonIgnore
     private List<IngredientPrice> prices;
-    @JsonIgnore
+//    @JsonIgnore
     private List<StockMovement> stockMovements;
 
 

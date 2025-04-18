@@ -1,5 +1,6 @@
 package school.hei.pingpongspring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.Optional;
 public class Order {
     private long id;
     private String reference;
+    @JsonIgnore
     private List<OrderStatus> status;
     private List<DishOrder> dishOrders;
 
