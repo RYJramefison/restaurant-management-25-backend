@@ -87,7 +87,7 @@ public class IngredientService {
 
         List<StockMovement> SavedStockMovement = subjectStockMovement.saveAll(stockMovementsToAdd);
 
-        ingredient.addStockMovements(stockMovementsToAdd);
+        ingredient.addStockMovements(SavedStockMovement);
         return ingredient;
     }
 }

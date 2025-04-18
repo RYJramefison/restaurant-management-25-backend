@@ -6,6 +6,7 @@ import school.hei.pingpongspring.model.IngredientPrice;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class IngredientPriceDAO implements CrudDAO<IngredientPrice>{
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setLong(1, entityToSave.getIngredientId());
                     statement.setFloat(2, (float) entityToSave.getPrice());
-                    statement.setTimestamp(3, Timestamp.from(entityToSave.getDate()));
+                    statement.setTimestamp(3, Timestamp.from(Instant.now()));
                     try (ResultSet resultSet = statement.executeQuery()) {
                         if (resultSet.next()) {
                             prices.add(mapFromResultSet(resultSet));
