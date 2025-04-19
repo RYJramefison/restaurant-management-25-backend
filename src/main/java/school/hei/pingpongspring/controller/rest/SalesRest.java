@@ -12,14 +12,14 @@ import org.springframework.stereotype.Service;
 @Setter
 public class SalesRest {
     private long dishId;
-    private String name;
-    private String salePoint;
+    private String dishName;
+    private String salesPoint;
     private int quantitySold;
     private int price;
 
-    public SalesRest(long dishId, String name, int quantitySold, int price) {
+    public SalesRest(long dishId, String dishName, int quantitySold, int price) {
         this.dishId = dishId;
-        this.name = name;
+        this.dishName = dishName;
         this.quantitySold = quantitySold;
         this.price = price;
     }

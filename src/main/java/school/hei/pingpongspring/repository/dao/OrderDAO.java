@@ -41,7 +41,7 @@ public class OrderDAO implements CrudDAO<Order>{
             while (res.next()) {
                 SalesRest salesRest = new SalesRest();
                 salesRest.setDishId(res.getLong("id"));
-                salesRest.setName(res.getString("name"));
+                salesRest.setDishName(res.getString("name"));
                 salesRest.setQuantitySold(res.getInt("total_quantity"));
                 salesRest.setPrice(res.getInt("price"));
 

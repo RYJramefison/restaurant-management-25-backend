@@ -19,7 +19,7 @@ public class SalesRestController2 {
     public ResponseEntity<Object> getSales(){
         List<SalesRest> salesRestList = orderService.GetSales();
         for (SalesRest salesRest : salesRestList) {
-            salesRest.setSalePoint("Antanimena");
+            salesRest.setSalesPoint("Antanimena");
         }
 
         return ResponseEntity.ok().body(salesRestList);
