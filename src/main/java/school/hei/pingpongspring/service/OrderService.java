@@ -39,14 +39,14 @@ public class OrderService {
         return orderDAO.getDishByOrder(id);
     }
 
-    public List<DishOrder> updateDishOrder(long reference, List<AddOrUpdateDishOrders>  dishOrderList) throws Exception {
+    public List<DishOrder> updateDishOrder(String reference, List<AddOrUpdateDishOrders>  dishOrderList) throws Exception {
         List<DishOrder> dishOrders = new ArrayList<>();
         for (AddOrUpdateDishOrders addOrUpdateDishOrders : dishOrderList) {
             for (DishOrderRest dish : addOrUpdateDishOrders.getDishes()) {
 
                 DishOrderStatus dishOrderStatus = new DishOrderStatus(Instant.now(),addOrUpdateDishOrders.getOrderStatus());
 
-                DishOrder dishOrder = new DishOrder(dishDAO.findById(dish.getDishIdentifier()), reference, dish.getQuantityOrdered(), List.of(dishOrderStatus));
+                DishOrder dishOrder = new DishOrder(dishDAO.findById(dish.getDishIdentifier()), findByReference(reference).getId(), dish.getQuantityOrdered(), List.of(dishOrderStatus));
                 dishOrders.add(dishOrder);
             }
         }

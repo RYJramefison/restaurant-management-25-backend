@@ -37,7 +37,7 @@ public class OrderRestController1 {
 
     @PutMapping("/{reference}/dishes")
     public ResponseEntity<Object> updateDishOrder(
-            @PathVariable (required = false) long reference,
+            @PathVariable (required = false) String reference,
             @RequestBody List<AddOrUpdateDishOrders> dishOrderList
     ) throws Exception {
         return ResponseEntity.ok().body(orderService.updateDishOrder(reference, dishOrderList));
