@@ -38,7 +38,7 @@ public class IngredientRestController {
 
     @GetMapping("/filter")
     public ResponseEntity<List<Ingredient>> findByCriteria(
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "100") int size,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Unit unit

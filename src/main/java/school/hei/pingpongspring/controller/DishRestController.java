@@ -33,7 +33,7 @@ public class DishRestController {
     @GetMapping
     public ResponseEntity<Object> getAll(
             @RequestParam(defaultValue = "1", required = false)  int page,
-            @RequestParam (defaultValue = "10", required = false) int size
+            @RequestParam (defaultValue = "100", required = false) int size
     ) {
         return ResponseEntity.ok().body(dishService.getAll(page, size));
     }
