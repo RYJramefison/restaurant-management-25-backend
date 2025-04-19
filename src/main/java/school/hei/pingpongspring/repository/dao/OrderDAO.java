@@ -4,6 +4,7 @@ package school.hei.pingpongspring.repository.dao;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import school.hei.pingpongspring.controller.rest.SalesRest;
 import school.hei.pingpongspring.model.*;
 import school.hei.pingpongspring.repository.bd.DataSource;
 
@@ -18,7 +19,37 @@ public class OrderDAO implements CrudDAO<Order>{
     private final DishOrderDAO subjectDishOrder ;
     private final DishDAO subjectDish;
 
+    public List<SalesRest> getSales() {
+        List<SalesRest> salesRestList = new ArrayList<>();
+        String sql = "SELECT\n" +
+                "    d.id,\n" +
+                "    d.name,\n" +
+                "    SUM(do2.quantity) as total_quantity\n" +
+                "FROM \"order\" o\n" +
+                "         INNER JOIN order_status os ON o.id = os.order_id\n" +
+                "         INNER JOIN dish_order do2 ON o.id = do2.order_id\n" +
+                "         INNER JOIN dish d ON do2.dish_id = d.id\n" +
+                "WHERE os.status = 'DELIVER'\n" +
+                "GROUP BY d.id, d.name, os.status";
 
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(sql);
+             ResultSet res = pstm.executeQuery()) {
+
+            while (res.next()) {
+                SalesRest salesRest = new SalesRest();
+                salesRest.setDishId(res.getLong("id"));
+                salesRest.setName(res.getString("name"));
+                salesRest.setQuantitySold(res.getInt("total_quantity"));
+
+
+                salesRestList.add(salesRest);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération des commandes livrées", e);
+        }
+        return salesRestList;
+    }
 
 
     public List<Order> getAll(int page, int size) {

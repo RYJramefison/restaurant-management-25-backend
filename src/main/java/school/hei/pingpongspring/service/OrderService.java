@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import school.hei.pingpongspring.controller.rest.AddOrUpdateDishOrders;
 import school.hei.pingpongspring.controller.rest.DishOrderRest;
+import school.hei.pingpongspring.controller.rest.SalesRest;
 import school.hei.pingpongspring.controller.rest.UpdateDishOrderStatus;
 import school.hei.pingpongspring.model.DishOrder;
 import school.hei.pingpongspring.model.DishOrderStatus;
@@ -60,6 +61,10 @@ public class OrderService {
                 dishOrderDAO.saveStatus(dishOrderStatus1);
 
         return orderDAO.findById(orderId);
+    }
+
+    public List<SalesRest> GetSales(){
+        return orderDAO.getSales();
     }
 
     public Order saveOrder(Order order) throws SQLException {
