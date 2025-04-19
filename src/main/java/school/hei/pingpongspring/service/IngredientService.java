@@ -2,13 +2,12 @@ package school.hei.pingpongspring.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import school.hei.pingpongspring.controller.rest.CreateIngredient;
+import school.hei.pingpongspring.model.DishIngredient;
 import school.hei.pingpongspring.model.Ingredient;
 import school.hei.pingpongspring.model.IngredientPrice;
 import school.hei.pingpongspring.model.StockMovement;
-import school.hei.pingpongspring.repository.dao.Criteria;
-import school.hei.pingpongspring.repository.dao.IngredientDAO;
-import school.hei.pingpongspring.repository.dao.IngredientPriceDAO;
-import school.hei.pingpongspring.repository.dao.StockMovementDAO;
+import school.hei.pingpongspring.repository.dao.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +18,7 @@ public class IngredientService {
     private final IngredientDAO subjectIngredient;
     private final IngredientPriceDAO subjectPrice;
     private final StockMovementDAO subjectStockMovement;
+    private final Dish_IngredientDAO dishIngredientDAO;
 
     public Ingredient findById(long id){
         return subjectIngredient.findById(id);
@@ -64,6 +64,22 @@ public class IngredientService {
 
     public List<Ingredient> saveAll(List<Ingredient> ingredients) {
         return subjectIngredient.saveAll(ingredients);
+    }
+
+    public List<Ingredient> saveAllIngredients(long dishId, List<CreateIngredient> ingredients) {
+        List<Ingredient> ingredientList = new ArrayList<>();
+        for (CreateIngredient ingredient : ingredients) {
+            Ingredient ingredient1 = new Ingredient(ingredient.getId(),ingredient.getName(),ingredient.getUnit());
+            ingredientList.add(ingredient1);
+        }
+
+        List<Ingredient> savedIngredients = subjectIngredient.saveAll(ingredientList);
+        for (CreateIngredient ingredient : ingredients) {
+            DishIngredient dishIngredient = new DishIngredient(dishId,ingredient.getId(), ingredient.getRequiredQuantity(),ingredient.getUnit());
+            dishIngredientDAO.save(dishIngredient);
+        }
+
+        return savedIngredients;
     }
 
     public List<Ingredient> updateAll(List<Ingredient> ingredients) {

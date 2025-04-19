@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.controller.mapper.IngredientRestMapper;
+import school.hei.pingpongspring.controller.rest.CreateIngredient;
 import school.hei.pingpongspring.controller.rest.CreateIngredientPrice;
 import school.hei.pingpongspring.controller.rest.CreateOrUpdateIngredient;
 import school.hei.pingpongspring.controller.rest.IngredientRest;
@@ -83,6 +84,15 @@ public class IngredientRestController {
                 .toList();
         System.out.println("ingredient dans rest controller"+ingredientsRest);
         return ResponseEntity.ok().body(ingredientsRest);
+    }
+
+    @PostMapping("/{dishId}")
+    public ResponseEntity<Object> saveAllIngredientsWithQuantity(
+            @PathVariable (required = true) long dishId,
+            @RequestBody List<CreateIngredient> ingredientsToCreate
+    ) {
+
+        return ResponseEntity.ok().body(service.saveAllIngredients(dishId,ingredientsToCreate));
     }
 
     @PutMapping

@@ -22,9 +22,9 @@ public class Ingredient {
     private Instant dateTime;
     private Unit unit;
     @JsonIgnore
-    private List<IngredientPrice> prices;
+    private List<IngredientPrice> prices = new ArrayList<>();
     @JsonIgnore
-    private List<StockMovement> stockMovements;
+    private List<StockMovement> stockMovements = new ArrayList<>();
 
     public Ingredient(long id, String name) {
         this.id = id;
@@ -33,6 +33,11 @@ public class Ingredient {
 
     public Ingredient(long id, String name, Unit unit) {
         this.id = id;
+        this.name = name;
+        this.unit = unit;
+    }
+
+    public Ingredient(String name, Unit unit) {
         this.name = name;
         this.unit = unit;
     }
