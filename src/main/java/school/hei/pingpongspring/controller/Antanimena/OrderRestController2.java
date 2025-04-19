@@ -1,6 +1,7 @@
-package school.hei.pingpongspring.controller.Analamahitsy;
+package school.hei.pingpongspring.controller.Antanimena;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.controller.rest.AddOrUpdateDishOrders;
@@ -10,11 +11,12 @@ import school.hei.pingpongspring.service.OrderService;
 
 import java.sql.SQLException;
 import java.util.List;
+@Profile("Antanimena")
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/Analamahitsy/orders")
-public class OrderRestController {
+@RequestMapping("/Antanimena/orders")
+public class OrderRestController2 {
     private final OrderService orderService;
 
     @GetMapping("/{reference}")

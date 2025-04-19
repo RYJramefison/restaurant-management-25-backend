@@ -1,6 +1,7 @@
 package school.hei.pingpongspring.controller.Antanimena;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.controller.mapper.DishRestMapper;
@@ -11,11 +12,12 @@ import school.hei.pingpongspring.service.DishService;
 
 import java.util.List;
 
+@Profile("Antanimena")
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/Antanimena/dishes")
-public class DishRestController {
+public class DishRestController2 {
     private final DishService dishService;
     private final DishRestMapper dishRestMapper;
 

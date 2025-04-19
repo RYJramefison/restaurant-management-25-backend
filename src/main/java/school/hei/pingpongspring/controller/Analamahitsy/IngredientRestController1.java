@@ -1,6 +1,7 @@
-package school.hei.pingpongspring.controller.Antanimena;
+package school.hei.pingpongspring.controller.Analamahitsy;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.controller.mapper.IngredientRestMapper;
@@ -22,12 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+@Profile("Analamahitsy")
 
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/Antanimena/ingredients")
-public class IngredientRestController {
+@RequestMapping("/Analamahitsy/ingredients")
+public class IngredientRestController1 {
     private final IngredientService service;
     private final IngredientRestMapper ingredientRestMapper;
 
