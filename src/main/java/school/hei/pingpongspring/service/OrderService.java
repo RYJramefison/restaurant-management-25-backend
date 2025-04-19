@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import school.hei.pingpongspring.controller.rest.AddOrUpdateDishOrders;
 import school.hei.pingpongspring.controller.rest.DishOrderRest;
+import school.hei.pingpongspring.controller.rest.UpdateDishOrderStatus;
 import school.hei.pingpongspring.model.DishOrder;
 import school.hei.pingpongspring.model.DishOrderStatus;
 import school.hei.pingpongspring.model.Order;
@@ -16,6 +17,7 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,14 +48,16 @@ public class OrderService {
         return dishOrderDAO.saveAll(dishOrders);
     }
 
-    public Order updateDishOrderStatus(long orderId, long dishId, DishOrderStatus dishOrderStatus){
-        List<DishOrder> dishOrders = dishOrderDAO.findDishOrderByDish(dishId);
+    public Order updateDishOrderStatus(long orderId, long dishId, UpdateDishOrderStatus dishOrderStatus){
+        Order order = orderDAO.findById(orderId);
+        List<DishOrder> dishOrders = order.getDishOrders();
 
-        dishOrders.stream().forEach(dishOrder -> {
-            if (dishOrder.getOrderId() == orderId){
-                dishOrderDAO.saveStatus(dishOrderStatus);
-            }
-        });
+        DishOrder dishOrder = dishOrders.stream().filter(o -> o.getDish().getId() == dishId)
+                .collect(Collectors.toCollection(ArrayList::new)).getFirst();
+
+                DishOrderStatus dishOrderStatus1 = new DishOrderStatus(Instant.now(),dishOrderStatus.getStatus(),dishOrder.getId());
+
+                dishOrderDAO.saveStatus(dishOrderStatus1);
 
         return orderDAO.findById(orderId);
     }

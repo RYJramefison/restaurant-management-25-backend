@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.controller.rest.AddOrUpdateDishOrders;
+import school.hei.pingpongspring.controller.rest.UpdateDishOrderStatus;
 import school.hei.pingpongspring.model.DishOrder;
 import school.hei.pingpongspring.model.DishOrderStatus;
 import school.hei.pingpongspring.model.Order;
@@ -46,7 +47,7 @@ public class OrderRestController {
     public ResponseEntity<Object> updateDishStatus(
             @PathVariable (required = false) long reference,
             @PathVariable (required = false) long dishId,
-            @RequestBody DishOrderStatus dishOrderStatus
+            @RequestBody UpdateDishOrderStatus dishOrderStatus
             ) {
         return ResponseEntity.ok().body(orderService.updateDishOrderStatus(reference,dishId,dishOrderStatus));
     }
