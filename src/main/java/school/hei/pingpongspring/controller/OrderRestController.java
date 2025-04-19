@@ -45,7 +45,7 @@ public class OrderRestController {
 
     @PutMapping("/{reference}/dishes/{dishId}")
     public ResponseEntity<Object> updateDishStatus(
-            @PathVariable (required = false) long reference,
+            @PathVariable (required = false) String reference,
             @PathVariable (required = false) long dishId,
             @RequestBody UpdateDishOrderStatus dishOrderStatus
             ) {

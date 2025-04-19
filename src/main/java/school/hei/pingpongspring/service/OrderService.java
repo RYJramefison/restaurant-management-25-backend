@@ -53,8 +53,8 @@ public class OrderService {
         return dishOrderDAO.saveAll(dishOrders);
     }
 
-    public Order updateDishOrderStatus(long orderId, long dishId, UpdateDishOrderStatus dishOrderStatus){
-        Order order = orderDAO.findById(orderId);
+    public Order updateDishOrderStatus(String orderReference, long dishId, UpdateDishOrderStatus dishOrderStatus){
+        Order order = orderDAO.findById(findByReference(orderReference).getId());
         List<DishOrder> dishOrders = order.getDishOrders();
 
         DishOrder dishOrder = dishOrders.stream().filter(o -> o.getDish().getId() == dishId)
@@ -64,7 +64,7 @@ public class OrderService {
 
                 dishOrderDAO.saveStatus(dishOrderStatus1);
 
-        return orderDAO.findById(orderId);
+        return orderDAO.findById(findByReference(orderReference).getId());
     }
 
     public List<SalesRest> GetSales(){
