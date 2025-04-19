@@ -1,4 +1,4 @@
-package school.hei.pingpongspring.controller;
+package school.hei.pingpongspring.controller.Analamahitsy;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/dishes")
+@RequestMapping("/Analamahitsy/dishes")
 public class DishRestController {
     private final DishService dishService;
     private final DishRestMapper dishRestMapper;
