@@ -20,8 +20,8 @@ public class OrderRestController1 {
     private final OrderService orderService;
 
     @GetMapping("/{reference}")
-    public ResponseEntity<Object> findById(@PathVariable (required = false) long reference){
-        return ResponseEntity.ok().body(orderService.findById(reference));
+    public ResponseEntity<Object> findByReference(@PathVariable (required = false) String reference){
+        return ResponseEntity.ok().body(orderService.findByReference(reference));
     }
 
     @PostMapping("/{reference}")

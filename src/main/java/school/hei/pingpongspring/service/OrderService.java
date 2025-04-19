@@ -31,6 +31,10 @@ public class OrderService {
         return orderDAO.findById(id);
     }
 
+    public Order findByReference(String reference){
+        return orderDAO.findByReference(reference);
+    }
+
     public List<DishOrder> getdishByOrder(long id){
         return orderDAO.getDishByOrder(id);
     }
