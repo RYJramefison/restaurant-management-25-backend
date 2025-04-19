@@ -18,7 +18,7 @@ public class Dish {
     private long id;
     private String name;
     private int price;
-    private List<Ingredient> ingredients;
+    private List<Ingredient> ingredients = new ArrayList<>();
 
     public Integer getIngredientCost(){
 
@@ -35,6 +35,11 @@ public class Dish {
         }).sum();
     }
 
+    public Dish(long id, String name, int price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
 
     public Integer getIngredientCost(LocalDate expectedDate){
 

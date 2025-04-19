@@ -117,6 +117,37 @@ public class DishDAO implements CrudDAO<Dish> {
         }
     }
 
+    public List<Dish> saveAll(List<Dish> dishes) {
+        List<Dish> dishList = new ArrayList<>();
+        String sql = "INSERT INTO dish (id, name, price) VALUES (?, ?, ?)" +
+                " ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, price = EXCLUDED.price" +
+                " RETURNING id, name, price";
+
+        try (Connection connection = db.getConnection()) {
+            for (Dish dish : dishes) {
+                try (PreparedStatement pstm = connection.prepareStatement(sql)) {
+                    pstm.setInt(1,(int) dish.getId());
+                    pstm.setString(2, dish.getName());
+                    pstm.setInt(3, dish.getPrice());
+
+                    try (ResultSet rs = pstm.executeQuery()) {
+                        if (rs.next()) {
+                            Dish savedDish = new Dish(
+                                    rs.getInt("id"),
+                                    rs.getString("name"),
+                                    rs.getInt("price")
+                            );
+                            dishList.add(savedDish);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error saving dishes", e);
+        }
+
+        return dishList;
+    }
 
 
     public List<Ingredient> findIngredientByDish(long idDish){

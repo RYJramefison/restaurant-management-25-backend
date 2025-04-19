@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.hei.pingpongspring.controller.mapper.DishRestMapper;
+import school.hei.pingpongspring.controller.rest.CreateDish;
 import school.hei.pingpongspring.controller.rest.CreateOrUpdateDishIngredient;
 import school.hei.pingpongspring.controller.rest.DishRest;
 import school.hei.pingpongspring.controller.rest.IngredientRest;
@@ -25,6 +26,11 @@ public class DishRestController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> findById(@PathVariable (required = false) long id) {
         return ResponseEntity.ok().body(dishService.findById(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<Object> saveDish(@RequestBody List<CreateDish> dish) {
+        return ResponseEntity.ok().body(dishService.saveAllDishes(dish));
     }
 
     @GetMapping

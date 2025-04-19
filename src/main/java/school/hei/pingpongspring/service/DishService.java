@@ -2,6 +2,7 @@ package school.hei.pingpongspring.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import school.hei.pingpongspring.controller.rest.CreateDish;
 import school.hei.pingpongspring.controller.rest.CreateOrUpdateDishIngredient;
 import school.hei.pingpongspring.model.Dish;
 import school.hei.pingpongspring.model.DishIngredient;
@@ -28,6 +29,15 @@ public class DishService {
 
     public List<Dish> getAll(int page, int size){
         return subjectDish.getAll(page, size);
+    }
+
+    public List<Dish> saveAllDishes(List<CreateDish> dishes){
+        List<Dish> dishList = new ArrayList<>();
+        for (CreateDish dish : dishes) {
+            Dish dish1 = new Dish(dish.getId(),dish.getName(),dish.getPrice());
+            dishList.add(dish1);
+        }
+        return subjectDish.saveAll(dishList);
     }
 
     public List<Ingredient> getIngredientByDish(long dishId){
