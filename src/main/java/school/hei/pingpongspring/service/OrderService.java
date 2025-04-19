@@ -64,7 +64,7 @@ public class OrderService {
 
                 dishOrderDAO.saveStatus(dishOrderStatus1);
                 
-                List<DishOrderStatus> dishOrderStatuses = dishOrderDAO.ge()
+//                List<DishOrderStatus> dishOrderStatuses = o.getStatusByOrder()
 
         return orderDAO.findById(findByReference(orderReference).getId());
     }
