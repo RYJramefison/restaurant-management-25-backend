@@ -291,7 +291,31 @@ public class OrderDAO implements CrudDAO<Order>{
 
         }
 
+    public DishOrder findDishOrdersStatusByOrder(long id) {
+        DishOrder dishOrder = new DishOrder();
+        String sql = "select id, dish_id, order_id, quantity from dish_order where order_id=?";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(sql)) {
+            pstm.setLong(1, id);
+            try (ResultSet res = pstm.executeQuery()) {
+                while (res.next()){
+                    dishOrder.setId(res.getLong("id"));
 
+                    Dish dishOfOrder = subjectDish.findById(res.getLong("dish_id"));
+                    dishOrder.setDish(dishOfOrder);
+
+                    dishOrder.setOrderId(res.getLong("order_id"));
+
+                    dishOrder.setQuantity(res.getInt("quantity"));
+
+                    dishOrder.setStatus(subjectDishOrder.getStatusByDishOrder(res.getLong("id")));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("erreur sur la recuperation du dishOrder ",e);
+        }
+        return dishOrder;
+    }
 
 
     public Order saveOrder(Order toSave) throws SQLException {
